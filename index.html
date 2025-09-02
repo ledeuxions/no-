@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- META 기본 설정 -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NO열정페이 — 채용/협업 (Alba‑style · Beta)</title>
+  <meta name="description" content="알바천국 스타일의 리스트형 UI로 성과 기반(수익쉐어/보너스) 채용·협업 공고를 탐색하세요." />
+
+  <!-- TailwindCSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 전반 톤: 밝고 선명한 리스트 포털형 */
+    body{ background:#fafafa; }
+    .container{ max-width: 1200px; }
+    .line-clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .btn{ @apply inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold; }
+    .btn-primary{ @apply bg-rose-600 text-white hover:bg-rose-700; }
+    .btn-ghost{ @apply border bg-white hover:bg-gray-50; }
+    .badge{ @apply rounded-full border px-2 py-0.5 text-xs text-gray-700; }
+    .tag{ @apply rounded-full border px-2 py-1 text-xs hover:bg-gray-50; }
+  </style>
+
+  <!-- Supabase JS (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="text-gray-900">
+  <!-- 상단 고정 네비게이션 -->
+  <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <!-- 무엇을 변경하는지: 서비스 로고/워드마크 -->
+        <a href="#" class="text-xl font-extrabold">NO<span class="text-rose-600">열정페이</span>.COM</a>
+        <!-- 무엇을 변경하는지: 주요 내비 메뉴 -->
+        <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
+          <a href="#" class="hover:text-rose-600">채용/협업</a>
+          <a href="#" class="hover:text-rose-600">상단고정(예고)</a>
+          <a href="#guide" class="hover:text-rose-600">안전가이드</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- 무엇을 변경하는지: 로그인/로그아웃 버튼 -->
+        <button id="btn-login" class="btn btn-ghost">로그인</button>
+        <button id="btn-logout" class="btn btn-primary hidden">로그아웃</button>
+        <a href="#post" class="hidden sm:inline-flex btn btn-primary">공고 등록</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 상단 검색바 (Alba 스타일 참고: 큰 검색 + 필터 바) -->
+  <section class="border-b bg-white">
+    <div class="container mx-auto px-4 py-4">
+      <!-- 무엇을 변경하는지: 상단 키워드/필터 입력 UI -->
+      <div class="grid md:grid-cols-12 gap-3">
+        <div class="md:col-span-5">
+          <input id="q" type="text" class="w-full rounded-xl border px-3 py-2" placeholder="키워드(예: 프론트엔드, 영상편집, React)">
+        </div>
+        <div class="md:col-span-2">
+          <select id="loc" class="w-full rounded-xl border px-3 py-2">
+            <option value="">지역(전체)</option>
+            <option>서울</option><option>부산</option><option>대구</option><option>경기</option><option>온라인</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <select id="cat" class="w-full rounded-xl border px-3 py-2">
+            <option value="">분류(전체)</option>
+            <option>개발</option><option>디자인</option><option>영상/콘텐츠</option><option>마케팅/세일즈</option><option>운영/CS</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <select id="reward" class="w-full rounded-xl border px-3 py-2">
+            <option value="">보상(전체)</option>
+            <option value="share">수익쉐어</option>
+            <option value="bounty">건당 보너스</option>
+            <option value="hybrid">하이브리드</option>
+          </select>
+        </div>
+        <div class="md:col-span-1">
+          <button id="btn-search" class="w-full btn btn-primary">검색</button>
+        </div>
+      </div>
+      <!-- 무엇을 변경하는지: 퀵 태그 버튼들 -->
+      <div class="mt-3 flex flex-wrap gap-2 text-xs">
+        <button class="tag" data-q="원격">#원격</button>
+        <button class="tag" data-q="단기">#단기</button>
+        <button class="tag" data-q="장기">#장기</button>
+        <button class="tag" data-q="디자인">#디자인</button>
+        <button class="tag" data-q="React">#React</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 메인 레이아웃: 리스트 + 사이드바 -->
+  <main class="container mx-auto px-4 py-6 grid md:grid-cols-12 gap-6">
+    <!-- 리스트 영역 -->
+    <section class="md:col-span-9">
+      <!-- 무엇을 변경하는지: 정렬/결과 수 표시 바 -->
+      <div class="mb-3 flex items-center justify-between text-sm text-gray-600">
+        <div><span id="result-count">0</span>건의 공고</div>
+        <div class="flex items-center gap-2">
+          <label>정렬</label>
+          <select id="sort" class="rounded-lg border px-2 py-1">
+            <option value="recent">최신순</option>
+          </select>
+        </div>
+      </div>
+      <div id="list" class="grid gap-3"></div>
+      <!-- 페이지네이션 -->
+      <div class="mt-4 flex items-center justify-center gap-2">
+        <button id="prev" class="btn btn-ghost">이전</button>
+        <span id="page" class="text-sm text-gray-600">1</span>
+        <button id="next" class="btn btn-ghost">다음</button>
+      </div>
+    </section>
+
+    <!-- 사이드바: 카테고리/안내/최근 본 공고 -->
+    <aside class="md:col-span-3 space-y-3">
+      <div class="rounded-2xl border bg-white p-4">
+        <h3 class="font-bold">카테고리</h3>
+        <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
+          <button class="tag" data-cat="개발">개발</button>
+          <button class="tag" data-cat="디자인">디자인</button>
+          <button class="tag" data-cat="영상/콘텐츠">영상/콘텐츠</button>
+          <button class="tag" data-cat="마케팅/세일즈">마케팅/세일즈</button>
+          <button class="tag" data-cat="운영/CS">운영/CS</button>
+          <button class="tag" data-cat="">전체</button>
+        </div>
+      </div>
+      <div class="rounded-2xl border bg-white p-4" id="recent-box">
+        <h3 class="font-bold">최근 본 공고</h3>
+        <div id="recent" class="mt-2 space-y-2 text-sm text-gray-700"></div>
+      </div>
+      <div class="rounded-2xl border bg-white p-4" id="guide">
+        <h3 class="font-bold">안전/가이드</h3>
+        <ul class="mt-2 list-disc list-inside text-sm text-gray-700">
+          <li>수익쉐어 %·캡·지급 트리거 필수</li>
+          <li>무급 상시근로 대체 불가</li>
+          <li>분쟁 예방: 전자서명·증빙 보관</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 상세 모달 -->
+  <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-2xl rounded-2xl bg-white p-6">
+      <div class="flex items-start justify-between">
+        <h3 id="modal-title" class="text-lg font-bold"></h3>
+        <button id="modal-close" class="text-gray-500">닫기</button>
+      </div>
+      <div id="modal-body" class="mt-3 text-sm text-gray-700"></div>
+      <div class="mt-4 flex items-center justify-end gap-2">
+        <button id="btn-apply" class="btn btn-primary">지원/문의</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 스크립트: Supabase 초기화 + 데이터/인증/즐겨찾기/최근 본 공고 -->
+  <script>
+    /* =========================
+     * 1) Supabase 프로젝트 연결 (실제 값 입력)
+     * ========================= */
+    // 무엇을 변경하는지: 본인 프로젝트 URL/키로 교체 가능 (이미 사용자 값 적용)
+    const SUPABASE_URL = "https://vdcjlatwtiyolipidial.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2psYXR3dGl5b2xpcGlkaWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MzMzOTEsImV4cCI6MjA3MjAwOTM5MX0.ByedRcuojknx3WBGKaQhWunxtPFO8OLoLX0ndU_W3aA";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    /* =========================
+     * 2) DOM 참조
+     * ========================= */
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const qEl = document.getElementById('q');
+    const locEl = document.getElementById('loc');
+    const catEl = document.getElementById('cat');
+    const rewardEl = document.getElementById('reward');
+    const btnSearch = document.getElementById('btn-search');
+    const sortEl = document.getElementById('sort');
+
+    const listEl = document.getElementById('list');
+    const resultCountEl = document.getElementById('result-count');
+    const prevEl = document.getElementById('prev');
+    const nextEl = document.getElementById('next');
+    const pageEl = document.getElementById('page');
+
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const modalClose = document.getElementById('modal-close');
+    const btnApply = document.getElementById('btn-apply');
+
+    const recentEl = document.getElementById('recent');
+
+    /* =========================
+     * 3) 로그인/로그아웃 (매직링크)
+     * ========================= */
+    async function refreshAuthUI(){
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) { btnLogin.classList.add('hidden'); btnLogout.classList.remove('hidden'); }
+      else { btnLogout.classList.add('hidden'); btnLogin.classList.remove('hidden'); }
+    }
+
+    btnLogin?.addEventListener('click', async () => {
+      const email = prompt('로그인 이메일을 입력하세요');
+      if (!email) return;
+      const { error } = await supabase.auth.signInWithOtp({ email });
+      if (error) alert('로그인 메일 전송 실패: ' + error.message);
+      else alert('이메일로 로그인 링크를 보냈습니다.');
+    });
+
+    btnLogout?.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      refreshAuthUI();
+    });
+
+    /* =========================
+     * 4) 데이터 로딩/검색/페이지
+     * ========================= */
+    let page = 1;
+    const PAGE_SIZE = 12;
+
+    async function fetchJobs(){
+      let query = supabase.from('jobs').select('*', { count: 'exact' }).eq('is_published', true);
+
+      const q = qEl.value?.trim();
+      if (q) query = query.or(`title.ilike.%${q}%,company.ilike.%${q}%,desc.ilike.%${q}%`);
+
+      const loc = locEl.value; if (loc) query = query.eq('location', loc);
+      const cat = catEl.value; if (cat) query = query.eq('category', cat);
+      const rew = rewardEl.value; if (rew) query = query.eq('reward_type', rew);
+
+      const from = (page-1) * PAGE_SIZE; const to = from + PAGE_SIZE - 1;
+      const { data, error, count } = await query.order('created_at', { ascending:false }).range(from, to);
+      if (error){ listEl.innerHTML = `<div class='rounded-xl border bg-white p-4 text-rose-700 text-sm'>불러오기 실패: ${error.message}</div>`; return; }
+
+      renderList(data || []);
+      resultCountEl.textContent = count ?? 0;
+      pageEl.textContent = String(page);
+      prevEl.disabled = page <= 1;
+      nextEl.disabled = (page * PAGE_SIZE) >= (count || 0);
+    }
+
+    function renderList(rows){
+      if (!rows.length){
+        listEl.innerHTML = `<div class='rounded-xl border bg-white p-6 text-center text-sm text-gray-600'>조건에 맞는 공고가 없습니다.</div>`; return;
+      }
+      listEl.innerHTML = rows.map(row => JobCard(row)).join('');
+      document.querySelectorAll('[data-job]')?.forEach(el => {
+        el.addEventListener('click', (e) => {
+          const row = JSON.parse(el.dataset.job);
+          openModal(row);
+          addRecent(row);
+        });
+      });
+      document.querySelectorAll('[data-fav]')?.forEach(el => {
+        el.addEventListener('click', (e) => { e.stopPropagation(); toggleFav(el.dataset.fav); });
+      });
+      hydrateFavs();
+    }
+
+    function pill(reward){ return reward==='share'?'수익쉐어':reward==='bounty'?'건당 보너스':'하이브리드'; }
+
+    function JobCard(row){
+      const isFav = getFavs().includes(row.id);
+      return `
+        <article class="group rounded-2xl border bg-white p-4 hover:shadow-sm cursor-pointer" data-job='${jsonEscape(row)}'>
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="text-xs text-gray-500">${escapeHtml(row.category||'기타')} · ${escapeHtml(row.duration||'-')} · ${escapeHtml(row.location||'온라인')}</div>
+              <h3 class="mt-0.5 text-base font-bold group-hover:text-rose-700">${escapeHtml(row.title)}</h3>
+              <p class="mt-1 text-sm text-gray-700 line-clamp-2">${escapeHtml(row.short||row.desc||'')}</p>
+              <div class="mt-2 flex flex-wrap gap-2 text-xs text-gray-600">
+                <span class="badge">${pill(row.reward_type)}</span>
+                ${row.share?`<span class="badge">${escapeHtml(row.share)}</span>`:''}
+                ${row.cap?`<span class="badge">캡 ${escapeHtml(row.cap)}</span>`:''}
+                ${row.trigger?`<span class="badge">트리거 ${escapeHtml(row.trigger)}</span>`:''}
+              </div>
+            </div>
+            <div class="text-right min-w-28">
+              <button class="text-gray-400 hover:text-rose-600" title="즐겨찾기" data-fav="${row.id}">
+                ${isFav? '❤':'♡'}
+              </button>
+              <div class="text-xs text-gray-500 mt-2">${escapeHtml(row.company||'')}</div>
+              <div class="text-xs text-gray-400">${new Date(row.created_at).toLocaleDateString('ko-KR')}</div>
+              <button class="mt-2 btn btn-primary">상세보기</button>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    // 유틸: XSS 방지 및 데이터 직렬화
+    function escapeHtml(str){ return String(str||'').replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s])); }
+    function jsonEscape(obj){ return escapeHtml(JSON.stringify(obj)); }
+
+    /* =========================
+     * 5) 상세 모달 + 지원
+     * ========================= */
+    function openModal(row){
+      modalTitle.textContent = row.title;
+      modalBody.innerHTML = `
+        <div class="text-sm text-gray-700">
+          <div class="text-gray-500">${escapeHtml(row.company||'')} · ${escapeHtml(row.location||'온라인')}</div>
+          <div class="mt-2 whitespace-pre-wrap">${escapeHtml(row.desc||'')}</div>
+          <div class="mt-3 flex flex-wrap gap-2 text-xs">
+            ${row.reward_type?`<span class='badge'>${pill(row.reward_type)}</span>`:''}
+            ${row.share?`<span class='badge'>수익쉐어 ${escapeHtml(row.share)}</span>`:''}
+            ${row.cap?`<span class='badge'>캡 ${escapeHtml(row.cap)}</span>`:''}
+            ${row.trigger?`<span class='badge'>지급 트리거 ${escapeHtml(row.trigger)}</span>`:''}
+          </div>
+        </div>`;
+      btnApply.onclick = () => applyJob(row);
+      modal.classList.remove('hidden'); modal.classList.add('flex');
+    }
+    modalClose?.addEventListener('click', ()=>{ modal.classList.add('hidden'); modal.classList.remove('flex'); });
+
+    async function applyJob(row){
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session){ alert('로그인 후 이용해주세요.'); return; }
+      const email = prompt('연락받을 이메일/포트폴리오 링크를 입력하세요');
+      if (!email) return;
+      const { error } = await supabase.from('applications').insert({ job_id: row.id, applicant_email: email, note: '베타 간편지원' });
+      if (error) alert('지원 실패: ' + error.message); else alert('지원이 접수되었습니다.');
+    }
+
+    /* =========================
+     * 6) 즐겨찾기/최근 본 공고 (로컬스토리지)
+     * ========================= */
+    function getFavs(){ try{ return JSON.parse(localStorage.getItem('favJobs')||'[]'); }catch{ return []; } }
+    function setFavs(arr){ localStorage.setItem('favJobs', JSON.stringify(arr)); }
+    function toggleFav(id){ const cur=getFavs(); const i=cur.indexOf(id); if(i>-1) cur.splice(i,1); else cur.unshift(id); setFavs(cur); hydrateFavs(); }
+    function hydrateFavs(){
+      document.querySelectorAll('[data-fav]')?.forEach(btn=>{
+        const id = btn.dataset.fav; const isFav = getFavs().includes(id);
+        btn.textContent = isFav ? '❤' : '♡';
+      });
+    }
+
+    function addRecent(row){
+      let rec = [];
+      try{ rec = JSON.parse(localStorage.getItem('recentJobs')||'[]'); }catch{}
+      rec = rec.filter(r=>r.id!==row.id);
+      rec.unshift({ id: row.id, title: row.title });
+      rec = rec.slice(0,6);
+      localStorage.setItem('recentJobs', JSON.stringify(rec));
+      renderRecent();
+    }
+    function renderRecent(){
+      let rec=[]; try{ rec=JSON.parse(localStorage.getItem('recentJobs')||'[]'); }catch{}
+      if (!rec.length){ recentEl.innerHTML = '<div class="text-xs text-gray-500">아직 없음</div>'; return; }
+      recentEl.innerHTML = rec.map(r=>`<div class='truncate'>• ${escapeHtml(r.title)}</div>`).join('');
+    }
+
+    /* =========================
+     * 7) 이벤트 바인딩 & 초기 실행
+     * ========================= */
+    btnSearch?.addEventListener('click', ()=>{ page=1; fetchJobs(); });
+    document.querySelectorAll('.tag[data-q]')?.forEach(t=> t.addEventListener('click', ()=>{ qEl.value=t.dataset.q; page=1; fetchJobs(); }));
+    document.querySelectorAll('.tag[data-cat]')?.forEach(t=> t.addEventListener('click', ()=>{ catEl.value=t.dataset.cat; page=1; fetchJobs(); }));
+    prevEl?.addEventListener('click', ()=>{ if(page>1){ page--; fetchJobs(); }});
+    nextEl?.addEventListener('click', ()=>{ page++; fetchJobs(); });
+
+    refreshAuthUI();
+    renderRecent();
+    fetchJobs();
+  </script>
+
+  <!-- 푸터 -->
+  <footer class="mt-10 border-t bg-white">
+    <div class="container mx-auto px-4 py-8 text-sm text-gray-600 grid md:grid-cols-2 gap-4">
+      <div>
+        <div class="font-extrabold">NO열정페이.COM</div>
+        <p class="mt-2">알바천국 느낌의 리스트형 UI로, 성과 기반 협업 매칭을 빠르게 시작하세요. (베타)</p>
+      </div>
+      <div class="md:text-right space-x-4">
+        <a href="#guide" class="hover:text-rose-700">이용약관(예고)</a>
+        <a href="#guide" class="hover:text-rose-700">개인정보처리방침(예고)</a>
+        <span class="text-gray-400">© 2025</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
