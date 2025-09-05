@@ -1,6 +1,4 @@
-﻿import { env } from "netlify:env";
-
-export default async (request, context) => {
+﻿export default async (request, context) => {
   const realm = "NOYP-ADMIN";
   const hdr = request.headers.get("authorization") || "";
   if (!hdr.startsWith("Basic ")) {
@@ -8,7 +6,9 @@ export default async (request, context) => {
   }
   let user = "", pass = "";
   try { [user, pass] = atob(hdr.split(" ")[1]).split(":"); } catch (_) {}
-  if (user === env.ADMIN_USER && pass === env.ADMIN_PASS) {
+  const ADMIN_USER = Deno.env.get('ADMIN_USER') ?? '';
+  const ADMIN_PASS = Deno.env.get('ADMIN_PASS') ?? '';
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
     return context.next();
   }
   return new Response("Unauthorized", { status: 401, headers: { "WWW-Authenticate": `Basic realm="${realm}"` } });
