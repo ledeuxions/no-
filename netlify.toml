@@ -1,13 +1,13 @@
-﻿[build]
+[build]
   publish = "."
 
-# /admin을 /admin.html로 라우팅(정적 파일 그대로 서빙)
+# /admin → /admin.html 그대로 서빙
 [[redirects]]
   from = "/admin"
   to   = "/admin.html"
   status = 200
 
-# FAQ/공지 JSON은 항상 최신(브라우저 캐시 방지)
+# JSON은 항상 최신(캐시 금지)
 [[headers]]
   for = "/announcements.json"
   [headers.values]
@@ -27,7 +27,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
-# Edge Function: /admin 보호
+# Edge Function 매핑: /admin* 보호
 [[edge_functions]]
   path = "/admin*"
   function = "protect-admin"
