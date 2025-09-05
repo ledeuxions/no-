@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
@@ -15,15 +15,26 @@
   </nav>
   <main class="max-w-3xl mx-auto px-4 mt-8 space-y-4">
     <h1 class="text-3xl font-bold">FAQ</h1>
-    <details class="rounded-xl border border-white/10 p-4">
-      <summary class="font-semibold">이용 목적</summary>
-      <p class="mt-2 text-slate-300">현금 외 지분/자원/성과보상 등 대체 보상 조건을 계약으로 명확히 합니다.</p>
-    </details>
-    <details class="rounded-xl border border-white/10 p-4">
-      <summary class="font-semibold">법적 유의</summary>
-      <p class="mt-2 text-slate-300">무급 상시근로 대체는 금지됩니다. 전자서명/증빙 권장. 추후 가이드 제공.</p>
-    </details>
+    <div id="faq-list" class="space-y-3 text-sm text-slate-300">불러오는 중...</div>
   </main>
   <footer class="max-w-3xl mx-auto px-4 my-10 text-xs text-slate-500">(c) 2025 NO열정페이 - Beta</footer>
+  <script>
+  (async () => {
+    const box = document.getElementById('faq-list');
+    try {
+      const res = await fetch('faq.json', { cache: 'no-store' });
+      const data = await res.json();
+      const items = Array.isArray(data.items) ? data.items : [];
+      box.innerHTML = items.map(it => `
+        <details class='rounded-xl border border-white/10 p-4'>
+          <summary class='font-semibold'>${escapeHtml(it.q||'(제목없음)')}</summary>
+          <p class='mt-2'>${escapeHtml(it.a||'')}</p>
+        </details>`).join('');
+    } catch(e) {
+      box.innerHTML = '<div class="text-rose-400">불러오기 실패</div>';
+    }
+    function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
+  })();
+  </script>
 </body>
 </html>
