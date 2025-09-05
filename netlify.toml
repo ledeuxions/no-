@@ -1,0 +1,28 @@
+﻿[build]
+  publish = "."
+
+# /admin을 /admin.html로 라우팅(정적 파일 그대로 서빙)
+[[redirects]]
+  from = "/admin"
+  to   = "/admin.html"
+  status = 200
+
+# FAQ/공지 JSON은 항상 최신(브라우저 캐시 방지)
+[[headers]]
+  for = "/announcements.json"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+
+[[headers]]
+  for = "/faq.json"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+
+# 기본 보안 헤더
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
