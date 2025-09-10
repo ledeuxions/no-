@@ -1,0 +1,6 @@
+﻿# NOYP local tools (keep sources, ignore exe)
+tools/NOYP-Json-Editor.exe
+tools/*.log
+out.txt
+err.txt
+push_trace.log
