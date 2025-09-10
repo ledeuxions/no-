@@ -1,10 +1,61 @@
-﻿{
-  "items": [
+{
+  "name": "admin-open-dev (express)",
+  "description": "개발중에만 /admin 로그인 우회",
+  "ops": [
+    { "type": "note", "text": "브랜치 생성 (없으면 무시)" },
+    { "type": "cmd", "run": "git checkout -b feat/admin-open-dev" },
+
+    { "type": "note", "text": ".env.local에 ADMIN_OPEN=1 보장" },
+    { "type": "ensureLine", "file": ".env.local", "line": "ADMIN_OPEN=1" },
+
     {
-      "title": "첫 공지 — 베타 오픈",
-      "body": "홈에서 공고와 가이드를 점차 확장합니다. 피드백을 환영합니다.",
-      "date": "2025-09-04T00:00:00Z",
-      "published": true
-    }
+      "type": "write",
+      "file": "admin-gate.js",
+      "text": "module.exports=function(req,res,next){if(process.env.ADMIN_OPEN==='1'){try{req.user=req.user||{id:'dev-admin',role:'admin'};if(typeof req.isAuthenticated==='function'){req.isAuthenticated=()=>true;}req._devAdminOpen=true;}catch(e){}return next();}return next();};"
+    },
+
+    {
+      "type": "note",
+      "text": "server.js / app.js 에 adminGate 주입 (둘 중 존재하는 파일에만 적용)"
+    },
+    {
+      "type": "insertAfter",
+      "file": "server.js",
+      "pattern": "^[\\s\\S]*?\\bexpress\\s*\\(\\)\\s*;.*?$",
+      "flags": "m",
+      "insert": "\nconst adminGate = require('./admin-gate');\napp.use('/admin', adminGate);\n",
+      "ifNotContains": "adminGate"
+    },
+    {
+      "type": "insertAfter",
+      "file": "app.js",
+      "pattern": "^[\\s\\S]*?\\bexpress\\s*\\(\\)\\s*;.*?$",
+      "flags": "m",
+      "insert": "\nconst adminGate = require('./admin-gate');\napp.use('/admin', adminGate);\n",
+      "ifNotContains": "adminGate"
+    },
+
+    {
+      "type": "note",
+      "text": "혹시 개별 라우트에 auth 미들웨어가 붙어있으면, '/admin' 핸들러의 앞에 adminGate 끼워넣기"
+    },
+    {
+      "type": "replace",
+      "file": "server.js",
+      "pattern": "app\\.get\\(\\s*['\"]/admin['\"],\\s*",
+      "flags": "m",
+      "replace": "app.get('/admin', require('./admin-gate'), "
+    },
+    {
+      "type": "replace",
+      "file": "app.js",
+      "pattern": "app\\.get\\(\\s*['\"]/admin['\"],\\s*",
+      "flags": "m",
+      "replace": "app.get('/admin', require('./admin-gate'), "
+    },
+
+    { "type": "note", "text": "Git 추가/커밋 (사이드카 체크박스로 푸시도 가능)" },
+    { "type": "cmd", "run": "git add -A" },
+    { "type": "cmd", "run": "git commit -m \"dev(admin): open /admin when ADMIN_OPEN=1 (sidecar)\"" }
   ]
 }
