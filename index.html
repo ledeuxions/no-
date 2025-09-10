@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- META 기본 설정 -->
+  <!-- META 湲곕낯 ?ㅼ젙 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NO열정페이 — 채용/협업 (Alba‑style · Beta)</title>
-  <meta name="description" content="알바천국 스타일의 리스트형 UI로 성과 기반(수익쉐어/보너스) 채용·협업 공고를 탐색하세요." />
+  <title>NO?댁젙?섏씠 ??梨꾩슜/?묒뾽 (Alba?몊tyle 쨌 Beta)</title>
+  <meta name="description" content="?뚮컮泥쒓뎅 ?ㅽ??쇱쓽 由ъ뒪?명삎 UI濡??깃낵 湲곕컲(?섏씡?먯뼱/蹂대꼫?? 梨꾩슜쨌?묒뾽 怨듦퀬瑜??먯깋?섏꽭??" />
 
   <!-- TailwindCSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* 전반 톤: 밝고 선명한 리스트 포털형 */
+    /* ?꾨컲 ?? 諛앷퀬 ?좊챸??由ъ뒪???ы꽭??*/
     body{ background:#fafafa; }
     .container{ max-width: 1200px; }
     .line-clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
@@ -25,148 +25,148 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="text-gray-900">
-  <!-- 상단 고정 네비게이션 -->
+  <!-- ?곷떒 怨좎젙 ?ㅻ퉬寃뚯씠??-->
   <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
     <div class="container mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <!-- 무엇을 변경하는지: 서비스 로고/워드마크 -->
-        <a href="#" class="text-xl font-extrabold">NO<span class="text-rose-600">열정페이</span>.COM</a>
-        <!-- 무엇을 변경하는지: 주요 내비 메뉴 -->
+        <!-- 臾댁뾿??蹂寃쏀븯?붿?: ?쒕퉬??濡쒓퀬/?뚮뱶留덊겕 -->
+        <a href="#" class="text-xl font-extrabold">NO<span class="text-rose-600">?댁젙?섏씠</span>.COM</a>
+        <!-- 臾댁뾿??蹂寃쏀븯?붿?: 二쇱슂 ?대퉬 硫붾돱 -->
         <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
-          <a href="#" class="hover:text-rose-600">채용/협업</a>
-          <a href="#" class="hover:text-rose-600">상단고정(예고)</a>
-          <a href="#guide" class="hover:text-rose-600">안전가이드</a>
+          <a href="#" class="hover:text-rose-600">梨꾩슜/?묒뾽</a>
+          <a href="#" class="hover:text-rose-600">?곷떒怨좎젙(?덇퀬)</a>
+          <a href="#guide" class="hover:text-rose-600">?덉쟾媛?대뱶</a>
         </nav>
       </div>
       <div class="flex items-center gap-2">
-        <!-- 무엇을 변경하는지: 로그인/로그아웃 버튼 -->
-        <button id="btn-login" class="btn btn-ghost">로그인</button>
-        <button id="btn-logout" class="btn btn-primary hidden">로그아웃</button>
-        <a href="#post" class="hidden sm:inline-flex btn btn-primary">공고 등록</a>
+        <!-- 臾댁뾿??蹂寃쏀븯?붿?: 濡쒓렇??濡쒓렇?꾩썐 踰꾪듉 -->
+        <button id="btn-login" class="btn btn-ghost">濡쒓렇??/button>
+        <button id="btn-logout" class="btn btn-primary hidden">濡쒓렇?꾩썐</button>
+        <a href="#post" class="hidden sm:inline-flex btn btn-primary">怨듦퀬 ?깅줉</a>
       </div>
     </div>
   </header>
 
-  <!-- 상단 검색바 (Alba 스타일 참고: 큰 검색 + 필터 바) -->
+  <!-- ?곷떒 寃?됰컮 (Alba ?ㅽ???李멸퀬: ??寃??+ ?꾪꽣 諛? -->
   <section class="border-b bg-white">
     <div class="container mx-auto px-4 py-4">
-      <!-- 무엇을 변경하는지: 상단 키워드/필터 입력 UI -->
+      <!-- 臾댁뾿??蹂寃쏀븯?붿?: ?곷떒 ?ㅼ썙???꾪꽣 ?낅젰 UI -->
       <div class="grid md:grid-cols-12 gap-3">
         <div class="md:col-span-5">
-          <input id="q" type="text" class="w-full rounded-xl border px-3 py-2" placeholder="키워드(예: 프론트엔드, 영상편집, React)">
+          <input id="q" type="text" class="w-full rounded-xl border px-3 py-2" placeholder="?ㅼ썙???? ?꾨줎?몄뿏?? ?곸긽?몄쭛, React)">
         </div>
         <div class="md:col-span-2">
           <select id="loc" class="w-full rounded-xl border px-3 py-2">
-            <option value="">지역(전체)</option>
-            <option>서울</option><option>부산</option><option>대구</option><option>경기</option><option>온라인</option>
+            <option value="">吏???꾩껜)</option>
+            <option>?쒖슱</option><option>遺??/option><option>?援?/option><option>寃쎄린</option><option>?⑤씪??/option>
           </select>
         </div>
         <div class="md:col-span-2">
           <select id="cat" class="w-full rounded-xl border px-3 py-2">
-            <option value="">분류(전체)</option>
-            <option>개발</option><option>디자인</option><option>영상/콘텐츠</option><option>마케팅/세일즈</option><option>운영/CS</option>
+            <option value="">遺꾨쪟(?꾩껜)</option>
+            <option>媛쒕컻</option><option>?붿옄??/option><option>?곸긽/肄섑뀗痢?/option><option>留덉????몄씪利?/option><option>?댁쁺/CS</option>
           </select>
         </div>
         <div class="md:col-span-2">
           <select id="reward" class="w-full rounded-xl border px-3 py-2">
-            <option value="">보상(전체)</option>
-            <option value="share">수익쉐어</option>
-            <option value="bounty">건당 보너스</option>
-            <option value="hybrid">하이브리드</option>
+            <option value="">蹂댁긽(?꾩껜)</option>
+            <option value="share">?섏씡?먯뼱</option>
+            <option value="bounty">嫄대떦 蹂대꼫??/option>
+            <option value="hybrid">?섏씠釉뚮━??/option>
           </select>
         </div>
         <div class="md:col-span-1">
-          <button id="btn-search" class="w-full btn btn-primary">검색</button>
+          <button id="btn-search" class="w-full btn btn-primary">寃??/button>
         </div>
       </div>
-      <!-- 무엇을 변경하는지: 퀵 태그 버튼들 -->
+      <!-- 臾댁뾿??蹂寃쏀븯?붿?: ???쒓렇 踰꾪듉??-->
       <div class="mt-3 flex flex-wrap gap-2 text-xs">
-        <button class="tag" data-q="원격">#원격</button>
-        <button class="tag" data-q="단기">#단기</button>
-        <button class="tag" data-q="장기">#장기</button>
-        <button class="tag" data-q="디자인">#디자인</button>
+        <button class="tag" data-q="?먭꺽">#?먭꺽</button>
+        <button class="tag" data-q="?④린">#?④린</button>
+        <button class="tag" data-q="?κ린">#?κ린</button>
+        <button class="tag" data-q="?붿옄??>#?붿옄??/button>
         <button class="tag" data-q="React">#React</button>
       </div>
     </div>
   </section>
 
-  <!-- 메인 레이아웃: 리스트 + 사이드바 -->
+  <!-- 硫붿씤 ?덉씠?꾩썐: 由ъ뒪??+ ?ъ씠?쒕컮 -->
   <main class="container mx-auto px-4 py-6 grid md:grid-cols-12 gap-6">
-    <!-- 리스트 영역 -->
+    <!-- 由ъ뒪???곸뿭 -->
     <section class="md:col-span-9">
-      <!-- 무엇을 변경하는지: 정렬/결과 수 표시 바 -->
+      <!-- 臾댁뾿??蹂寃쏀븯?붿?: ?뺣젹/寃곌낵 ???쒖떆 諛?-->
       <div class="mb-3 flex items-center justify-between text-sm text-gray-600">
-        <div><span id="result-count">0</span>건의 공고</div>
+        <div><span id="result-count">0</span>嫄댁쓽 怨듦퀬</div>
         <div class="flex items-center gap-2">
-          <label>정렬</label>
+          <label>?뺣젹</label>
           <select id="sort" class="rounded-lg border px-2 py-1">
-            <option value="recent">최신순</option>
+            <option value="recent">理쒖떊??/option>
           </select>
         </div>
       </div>
       <div id="list" class="grid gap-3"></div>
-      <!-- 페이지네이션 -->
+      <!-- ?섏씠吏?ㅼ씠??-->
       <div class="mt-4 flex items-center justify-center gap-2">
-        <button id="prev" class="btn btn-ghost">이전</button>
+        <button id="prev" class="btn btn-ghost">?댁쟾</button>
         <span id="page" class="text-sm text-gray-600">1</span>
-        <button id="next" class="btn btn-ghost">다음</button>
+        <button id="next" class="btn btn-ghost">?ㅼ쓬</button>
       </div>
     </section>
 
-    <!-- 사이드바: 카테고리/안내/최근 본 공고 -->
+    <!-- ?ъ씠?쒕컮: 移댄뀒怨좊━/?덈궡/理쒓렐 蹂?怨듦퀬 -->
     <aside class="md:col-span-3 space-y-3">
       <div class="rounded-2xl border bg-white p-4">
-        <h3 class="font-bold">카테고리</h3>
+        <h3 class="font-bold">移댄뀒怨좊━</h3>
         <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
-          <button class="tag" data-cat="개발">개발</button>
-          <button class="tag" data-cat="디자인">디자인</button>
-          <button class="tag" data-cat="영상/콘텐츠">영상/콘텐츠</button>
-          <button class="tag" data-cat="마케팅/세일즈">마케팅/세일즈</button>
-          <button class="tag" data-cat="운영/CS">운영/CS</button>
-          <button class="tag" data-cat="">전체</button>
+          <button class="tag" data-cat="媛쒕컻">媛쒕컻</button>
+          <button class="tag" data-cat="?붿옄??>?붿옄??/button>
+          <button class="tag" data-cat="?곸긽/肄섑뀗痢?>?곸긽/肄섑뀗痢?/button>
+          <button class="tag" data-cat="留덉????몄씪利?>留덉????몄씪利?/button>
+          <button class="tag" data-cat="?댁쁺/CS">?댁쁺/CS</button>
+          <button class="tag" data-cat="">?꾩껜</button>
         </div>
       </div>
       <div class="rounded-2xl border bg-white p-4" id="recent-box">
-        <h3 class="font-bold">최근 본 공고</h3>
+        <h3 class="font-bold">理쒓렐 蹂?怨듦퀬</h3>
         <div id="recent" class="mt-2 space-y-2 text-sm text-gray-700"></div>
       </div>
       <div class="rounded-2xl border bg-white p-4" id="guide">
-        <h3 class="font-bold">안전/가이드</h3>
+        <h3 class="font-bold">?덉쟾/媛?대뱶</h3>
         <ul class="mt-2 list-disc list-inside text-sm text-gray-700">
-          <li>수익쉐어 %·캡·지급 트리거 필수</li>
-          <li>무급 상시근로 대체 불가</li>
-          <li>분쟁 예방: 전자서명·증빙 보관</li>
+          <li>?섏씡?먯뼱 %쨌罹≤룹?湲??몃━嫄??꾩닔</li>
+          <li>臾닿툒 ?곸떆洹쇰줈 ?泥?遺덇?</li>
+          <li>遺꾩웳 ?덈갑: ?꾩옄?쒕챸쨌利앸튃 蹂닿?</li>
         </ul>
       </div>
     </aside>
   </main>
 
-  <!-- 상세 모달 -->
+  <!-- ?곸꽭 紐⑤떖 -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
     <div class="w-full max-w-2xl rounded-2xl bg-white p-6">
       <div class="flex items-start justify-between">
         <h3 id="modal-title" class="text-lg font-bold"></h3>
-        <button id="modal-close" class="text-gray-500">닫기</button>
+        <button id="modal-close" class="text-gray-500">?リ린</button>
       </div>
       <div id="modal-body" class="mt-3 text-sm text-gray-700"></div>
       <div class="mt-4 flex items-center justify-end gap-2">
-        <button id="btn-apply" class="btn btn-primary">지원/문의</button>
+        <button id="btn-apply" class="btn btn-primary">吏??臾몄쓽</button>
       </div>
     </div>
   </div>
 
-  <!-- 스크립트: Supabase 초기화 + 데이터/인증/즐겨찾기/최근 본 공고 -->
+  <!-- ?ㅽ겕由쏀듃: Supabase 珥덇린??+ ?곗씠???몄쬆/利먭꺼李얘린/理쒓렐 蹂?怨듦퀬 -->
   <script>
     /* =========================
-     * 1) Supabase 프로젝트 연결 (실제 값 입력)
+     * 1) Supabase ?꾨줈?앺듃 ?곌껐 (?ㅼ젣 媛??낅젰)
      * ========================= */
-    // 무엇을 변경하는지: 본인 프로젝트 URL/키로 교체 가능 (이미 사용자 값 적용)
+    // 臾댁뾿??蹂寃쏀븯?붿?: 蹂몄씤 ?꾨줈?앺듃 URL/?ㅻ줈 援먯껜 媛??(?대? ?ъ슜??媛??곸슜)
     const SUPABASE_URL = "https://vdcjlatwtiyolipidial.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2psYXR3dGl5b2xpcGlkaWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MzMzOTEsImV4cCI6MjA3MjAwOTM5MX0.ByedRcuojknx3WBGKaQhWunxtPFO8OLoLX0ndU_W3aA";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     /* =========================
-     * 2) DOM 참조
+     * 2) DOM 李몄“
      * ========================= */
     const btnLogin = document.getElementById('btn-login');
     const btnLogout = document.getElementById('btn-logout');
@@ -192,7 +192,7 @@
     const recentEl = document.getElementById('recent');
 
     /* =========================
-     * 3) 로그인/로그아웃 (매직링크)
+     * 3) 濡쒓렇??濡쒓렇?꾩썐 (留ㅼ쭅留곹겕)
      * ========================= */
     async function refreshAuthUI(){
       const { data: { session } } = await supabase.auth.getSession();
@@ -201,11 +201,11 @@
     }
 
     btnLogin?.addEventListener('click', async () => {
-      const email = prompt('로그인 이메일을 입력하세요');
+      const email = prompt('濡쒓렇???대찓?쇱쓣 ?낅젰?섏꽭??);
       if (!email) return;
       const { error } = await supabase.auth.signInWithOtp({ email });
-      if (error) alert('로그인 메일 전송 실패: ' + error.message);
-      else alert('이메일로 로그인 링크를 보냈습니다.');
+      if (error) alert('濡쒓렇??硫붿씪 ?꾩넚 ?ㅽ뙣: ' + error.message);
+      else alert('?대찓?쇰줈 濡쒓렇??留곹겕瑜?蹂대깉?듬땲??');
     });
 
     btnLogout?.addEventListener('click', async () => {
@@ -214,7 +214,7 @@
     });
 
     /* =========================
-     * 4) 데이터 로딩/검색/페이지
+     * 4) ?곗씠??濡쒕뵫/寃???섏씠吏
      * ========================= */
     let page = 1;
     const PAGE_SIZE = 12;
@@ -231,7 +231,7 @@
 
       const from = (page-1) * PAGE_SIZE; const to = from + PAGE_SIZE - 1;
       const { data, error, count } = await query.order('created_at', { ascending:false }).range(from, to);
-      if (error){ listEl.innerHTML = `<div class='rounded-xl border bg-white p-4 text-rose-700 text-sm'>불러오기 실패: ${error.message}</div>`; return; }
+      if (error){ listEl.innerHTML = `<div class='rounded-xl border bg-white p-4 text-rose-700 text-sm'>遺덈윭?ㅺ린 ?ㅽ뙣: ${error.message}</div>`; return; }
 
       renderList(data || []);
       resultCountEl.textContent = count ?? 0;
@@ -242,7 +242,7 @@
 
     function renderList(rows){
       if (!rows.length){
-        listEl.innerHTML = `<div class='rounded-xl border bg-white p-6 text-center text-sm text-gray-600'>조건에 맞는 공고가 없습니다.</div>`; return;
+        listEl.innerHTML = `<div class='rounded-xl border bg-white p-6 text-center text-sm text-gray-600'>議곌굔??留욌뒗 怨듦퀬媛 ?놁뒿?덈떎.</div>`; return;
       }
       listEl.innerHTML = rows.map(row => JobCard(row)).join('');
       document.querySelectorAll('[data-job]')?.forEach(el => {
@@ -258,7 +258,7 @@
       hydrateFavs();
     }
 
-    function pill(reward){ return reward==='share'?'수익쉐어':reward==='bounty'?'건당 보너스':'하이브리드'; }
+    function pill(reward){ return reward==='share'?'?섏씡?먯뼱':reward==='bounty'?'嫄대떦 蹂대꼫??:'?섏씠釉뚮━??; }
 
     function JobCard(row){
       const isFav = getFavs().includes(row.id);
@@ -266,46 +266,46 @@
         <article class="group rounded-2xl border bg-white p-4 hover:shadow-sm cursor-pointer" data-job='${jsonEscape(row)}'>
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
-              <div class="text-xs text-gray-500">${escapeHtml(row.category||'기타')} · ${escapeHtml(row.duration||'-')} · ${escapeHtml(row.location||'온라인')}</div>
+              <div class="text-xs text-gray-500">${escapeHtml(row.category||'湲고?')} 쨌 ${escapeHtml(row.duration||'-')} 쨌 ${escapeHtml(row.location||'?⑤씪??)}</div>
               <h3 class="mt-0.5 text-base font-bold group-hover:text-rose-700">${escapeHtml(row.title)}</h3>
               <p class="mt-1 text-sm text-gray-700 line-clamp-2">${escapeHtml(row.short||row.desc||'')}</p>
               <div class="mt-2 flex flex-wrap gap-2 text-xs text-gray-600">
                 <span class="badge">${pill(row.reward_type)}</span>
                 ${row.share?`<span class="badge">${escapeHtml(row.share)}</span>`:''}
-                ${row.cap?`<span class="badge">캡 ${escapeHtml(row.cap)}</span>`:''}
-                ${row.trigger?`<span class="badge">트리거 ${escapeHtml(row.trigger)}</span>`:''}
+                ${row.cap?`<span class="badge">罹?${escapeHtml(row.cap)}</span>`:''}
+                ${row.trigger?`<span class="badge">?몃━嫄?${escapeHtml(row.trigger)}</span>`:''}
               </div>
             </div>
             <div class="text-right min-w-28">
-              <button class="text-gray-400 hover:text-rose-600" title="즐겨찾기" data-fav="${row.id}">
-                ${isFav? '❤':'♡'}
+              <button class="text-gray-400 hover:text-rose-600" title="利먭꺼李얘린" data-fav="${row.id}">
+                ${isFav? '??:'??}
               </button>
               <div class="text-xs text-gray-500 mt-2">${escapeHtml(row.company||'')}</div>
               <div class="text-xs text-gray-400">${new Date(row.created_at).toLocaleDateString('ko-KR')}</div>
-              <button class="mt-2 btn btn-primary">상세보기</button>
+              <button class="mt-2 btn btn-primary">?곸꽭蹂닿린</button>
             </div>
           </div>
         </article>`;
     }
 
-    // 유틸: XSS 방지 및 데이터 직렬화
+    // ?좏떥: XSS 諛⑹? 諛??곗씠??吏곷젹??
     function escapeHtml(str){ return String(str||'').replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s])); }
     function jsonEscape(obj){ return escapeHtml(JSON.stringify(obj)); }
 
     /* =========================
-     * 5) 상세 모달 + 지원
+     * 5) ?곸꽭 紐⑤떖 + 吏??
      * ========================= */
     function openModal(row){
       modalTitle.textContent = row.title;
       modalBody.innerHTML = `
         <div class="text-sm text-gray-700">
-          <div class="text-gray-500">${escapeHtml(row.company||'')} · ${escapeHtml(row.location||'온라인')}</div>
+          <div class="text-gray-500">${escapeHtml(row.company||'')} 쨌 ${escapeHtml(row.location||'?⑤씪??)}</div>
           <div class="mt-2 whitespace-pre-wrap">${escapeHtml(row.desc||'')}</div>
           <div class="mt-3 flex flex-wrap gap-2 text-xs">
             ${row.reward_type?`<span class='badge'>${pill(row.reward_type)}</span>`:''}
-            ${row.share?`<span class='badge'>수익쉐어 ${escapeHtml(row.share)}</span>`:''}
-            ${row.cap?`<span class='badge'>캡 ${escapeHtml(row.cap)}</span>`:''}
-            ${row.trigger?`<span class='badge'>지급 트리거 ${escapeHtml(row.trigger)}</span>`:''}
+            ${row.share?`<span class='badge'>?섏씡?먯뼱 ${escapeHtml(row.share)}</span>`:''}
+            ${row.cap?`<span class='badge'>罹?${escapeHtml(row.cap)}</span>`:''}
+            ${row.trigger?`<span class='badge'>吏湲??몃━嫄?${escapeHtml(row.trigger)}</span>`:''}
           </div>
         </div>`;
       btnApply.onclick = () => applyJob(row);
@@ -315,15 +315,15 @@
 
     async function applyJob(row){
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session){ alert('로그인 후 이용해주세요.'); return; }
-      const email = prompt('연락받을 이메일/포트폴리오 링크를 입력하세요');
+      if (!session){ alert('濡쒓렇?????댁슜?댁＜?몄슂.'); return; }
+      const email = prompt('?곕씫諛쏆쓣 ?대찓???ы듃?대━??留곹겕瑜??낅젰?섏꽭??);
       if (!email) return;
-      const { error } = await supabase.from('applications').insert({ job_id: row.id, applicant_email: email, note: '베타 간편지원' });
-      if (error) alert('지원 실패: ' + error.message); else alert('지원이 접수되었습니다.');
+      const { error } = await supabase.from('applications').insert({ job_id: row.id, applicant_email: email, note: '踰좏? 媛꾪렪吏?? });
+      if (error) alert('吏???ㅽ뙣: ' + error.message); else alert('吏?먯씠 ?묒닔?섏뿀?듬땲??');
     }
 
     /* =========================
-     * 6) 즐겨찾기/최근 본 공고 (로컬스토리지)
+     * 6) 利먭꺼李얘린/理쒓렐 蹂?怨듦퀬 (濡쒖뺄?ㅽ넗由ъ?)
      * ========================= */
     function getFavs(){ try{ return JSON.parse(localStorage.getItem('favJobs')||'[]'); }catch{ return []; } }
     function setFavs(arr){ localStorage.setItem('favJobs', JSON.stringify(arr)); }
@@ -331,7 +331,7 @@
     function hydrateFavs(){
       document.querySelectorAll('[data-fav]')?.forEach(btn=>{
         const id = btn.dataset.fav; const isFav = getFavs().includes(id);
-        btn.textContent = isFav ? '❤' : '♡';
+        btn.textContent = isFav ? '?? : '??;
       });
     }
 
@@ -346,12 +346,12 @@
     }
     function renderRecent(){
       let rec=[]; try{ rec=JSON.parse(localStorage.getItem('recentJobs')||'[]'); }catch{}
-      if (!rec.length){ recentEl.innerHTML = '<div class="text-xs text-gray-500">아직 없음</div>'; return; }
-      recentEl.innerHTML = rec.map(r=>`<div class='truncate'>• ${escapeHtml(r.title)}</div>`).join('');
+      if (!rec.length){ recentEl.innerHTML = '<div class="text-xs text-gray-500">?꾩쭅 ?놁쓬</div>'; return; }
+      recentEl.innerHTML = rec.map(r=>`<div class='truncate'>??${escapeHtml(r.title)}</div>`).join('');
     }
 
     /* =========================
-     * 7) 이벤트 바인딩 & 초기 실행
+     * 7) ?대깽??諛붿씤??& 珥덇린 ?ㅽ뻾
      * ========================= */
     btnSearch?.addEventListener('click', ()=>{ page=1; fetchJobs(); });
     document.querySelectorAll('.tag[data-q]')?.forEach(t=> t.addEventListener('click', ()=>{ qEl.value=t.dataset.q; page=1; fetchJobs(); }));
@@ -364,19 +364,50 @@
     fetchJobs();
   </script>
 
-  <!-- 푸터 -->
+  <!-- ?명꽣 -->
   <footer class="mt-10 border-t bg-white">
     <div class="container mx-auto px-4 py-8 text-sm text-gray-600 grid md:grid-cols-2 gap-4">
       <div>
-        <div class="font-extrabold">NO열정페이.COM</div>
-        <p class="mt-2">알바천국 느낌의 리스트형 UI로, 성과 기반 협업 매칭을 빠르게 시작하세요. (베타)</p>
+        <div class="font-extrabold">NO?댁젙?섏씠.COM</div>
+        <p class="mt-2">?뚮컮泥쒓뎅 ?먮굦??由ъ뒪?명삎 UI濡? ?깃낵 湲곕컲 ?묒뾽 留ㅼ묶??鍮좊Ⅴ寃??쒖옉?섏꽭?? (踰좏?)</p>
       </div>
       <div class="md:text-right space-x-4">
-        <a href="#guide" class="hover:text-rose-700">이용약관(예고)</a>
-        <a href="#guide" class="hover:text-rose-700">개인정보처리방침(예고)</a>
-        <span class="text-gray-400">© 2025</span>
+        <a href="#guide" class="hover:text-rose-700">?댁슜?쎄?(?덇퀬)</a>
+        <a href="#guide" class="hover:text-rose-700">媛쒖씤?뺣낫泥섎━諛⑹묠(?덇퀬)</a>
+        <span class="text-gray-400">짤 2025</span>
       </div>
     </div>
   </footer>
+  
+  <!-- ANNOUNCEMENTS LOADER -->
+  <script>
+  (async () => {
+    try {
+      const r = await fetch('announcements.json', { cache: 'no-store' });
+      if(!r.ok) return; const d = await r.json();
+      const it = (d && Array.isArray(d.items)) ? d.items.filter(x=>x.published) : [];
+      if(!it.length) return; const a = it[0];
+      const wrap = document.createElement('div');
+      wrap.className = 'sticky top-0 z-50';
+      wrap.innerHTML = `
+        <div class="bg-amber-100 text-amber-900 border-b border-amber-200">
+          <div class="container mx-auto px-4 py-2 text-sm flex items-center justify-between">
+            <div class="truncate"><strong class="mr-2">공지</strong>${escapeHtml(a.title||'공지')}</div>
+            <button onclick="this.closest('div.bg-amber-100').remove();">닫기</button>
+          </div>
+        </div>`;
+      document.body.prepend(wrap);
+      function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+    } catch(e) { console.warn('announcements loader error', e) }
+  })();
+  </script>
+
+<!-- [safety-guide:start] -->
+<!-- 안전/가이드 v2 (이 파일을 편집하세요) -->`r`n<section id="safety-guide" class="prose max-w-3xl mx-auto py-8">`r`n  <h2>안전/가이드</h2>`r`n  <p>본 플랫폼은 구인·구직 당사자가 자율적으로 계약을 체결하도록 돕는 중개 도구입니다. 계약의 법적 효력과 책임은 당사자에게 귀속됩니다.</p>`r`n  <h3>계약서 작성 시 주의</h3>`r`n  <ul>`r`n    <li>반드시 <strong>서면 계약</strong>으로 체결 (구두합의 지양)</li>`r`n    <li>근로형태/역할/책임/보수/지급시기/분쟁절차 명시</li>`r`n    <li>개인정보 보호 및 관련 법령(근로기준법·민법·상법 등) 준수</li>`r`n  </ul>`r`n  <h3>수익 분배 가이드</h3>`r`n  <ul>`r`n    <li>시작 전 <strong>비율·기준</strong> 합의(기여도·위험·자본 반영)</li>`r`n    <li>지분/매출쉐어/성과보너스 구조 명확화, 정산 근거 보관</li>`r`n  </ul>`r`n  <h3>법적 고지</h3>`r`n  <p>플랫폼은 표준계약서·가이드·법률상담 연계를 제공할 수 있으나 계약 당사자는 아닙니다. 분쟁 시 중재/조정/소송 절차를 사용할 수 있습니다.</p>`r`n</section>`r`n
+
+<!-- [safety-guide:end] -->
 </body>
 </html>
+
+
+
