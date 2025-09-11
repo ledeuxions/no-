@@ -1,282 +1,161 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin — NO열정페이</title>
+  <title>NO정의 관리자</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .card{ @apply rounded-2xl border bg-white p-5 shadow-sm; }
-    .muted{ @apply text-sm text-gray-500; }
-    .btn{ @apply inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold border; }
-    .btn-primary{ @apply bg-rose-600 text-white border-rose-600 hover:bg-rose-700; }
-    .input{ @apply w-full rounded-xl border px-3 py-2; }
-    .table{ @apply w-full text-sm; }
-    .table th{ @apply text-left text-gray-500 font-medium py-2; }
-    .table td{ @apply py-2 align-top; }
-    .pill{ @apply inline-flex items-center rounded-full border px-2 py-0.5 text-xs; }
+    .btn { @apply inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-semibold; }
+    .btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-700; }
+    .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+    .btn-ghost { @apply border bg-white hover:bg-gray-50; }
+    .table-wrapper { @apply w-full overflow-x-auto; }
+    table { @apply w-full text-sm text-left; }
+    thead { @apply bg-gray-100 text-gray-700; }
+    th, td { @apply px-4 py-3; }
+    tbody tr { @apply border-b; }
+    .badge { @apply rounded-full px-2 py-0.5 text-xs; }
+    .badge-green { @apply bg-green-100 text-green-800; }
+    .badge-red { @apply bg-red-100 text-red-800; }
+    .modal { @apply fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2824624880449066"     crossorigin="anonymous"></script>
 </head>
 <body class="bg-gray-50 text-gray-900">
-  <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <a href="/" class="text-xl font-extrabold">NO<span class="text-rose-600">열정페이</span>.COM</a>
-        <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
-          <a href="/index.html" class="hover:text-rose-600">사이트</a>
-          <a href="/faq.html" class="hover:text-rose-600">FAQ</a>
-        </nav>
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 bg-white border-r">
+      <div class="p-4">
+        <h1 class="text-xl font-bold">NO정의 관리자</h1>
       </div>
-      <div class="flex items-center gap-2">
-        <button id="btn-login" class="btn">로그인</button>
-        <button id="btn-logout" class="btn btn-primary hidden">로그아웃</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 py-6 grid lg:grid-cols-12 gap-6">
-    <!-- 사이드바 -->
-    <aside class="lg:col-span-3 space-y-3">
-      <div class="card">
-        <div class="font-bold">메뉴</div>
-        <div class="mt-3 grid grid-cols-1 gap-2 text-sm">
-          <button data-tab="tab-overview" class="tablink btn">대시보드</button>
-          <button data-tab="tab-ann" class="tablink btn">공지 관리</button>
-          <button data-tab="tab-faq" class="tablink btn">FAQ 관리</button>
-          <button data-tab="tab-jobs" class="tablink btn">공고 관리</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="font-bold">세션</div>
-        <div id="whoami" class="muted mt-2">로그인 필요</div>
-      </div>
-      <div class="card">
-        <div class="font-bold">주의</div>
-        <p class="muted mt-2">이 페이지는 관리자만 접근합니다. 공유 금지.</p>
+      <nav class="mt-4 px-2 space-y-1">
+        <a href="#dashboard" class="nav-link flex items-center px-2 py-2 text-sm font-medium rounded-md bg-gray-100 text-gray-900">
+          대시보드
+        </a>
+        <a href="#jobs" class="nav-link flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+          채용 공고 관리
+        </a>
+        <a href="#announcements" class="nav-link flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+          공지사항 관리
+        </a>
+        <a href="#faqs" class="nav-link flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+          FAQ 관리
+        </a>
+      </nav>
+      <div class="absolute bottom-0 w-64 p-4 border-t">
+        <a href="/" class="text-sm text-gray-600 hover:text-indigo-600">← 사이트로 돌아가기</a>
       </div>
     </aside>
 
-    <!-- 본문 -->
-    <section class="lg:col-span-9 space-y-6">
-      <!-- Overview -->
-      <div id="tab-overview" class="card">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold">대시보드</h2>
-          <span id="env-pill" class="pill">Beta</span>
-        </div>
-        <div class="grid sm:grid-cols-3 gap-3 mt-4">
-          <div class="rounded-2xl border bg-white p-4">
-            <div class="muted">총 공고 수</div>
-            <div id="stat-jobs" class="text-2xl font-extrabold">-</div>
-          </div>
-          <div class="rounded-2xl border bg-white p-4">
-            <div class="muted">지원 수</div>
-            <div id="stat-apps" class="text-2xl font-extrabold">-</div>
-          </div>
-          <div class="rounded-2xl border bg-white p-4">
-            <div class="muted">공지/FAQ</div>
-            <div id="stat-meta" class="text-2xl font-extrabold">-</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Announcements -->
-      <div id="tab-ann" class="card hidden">
-        <h2 class="text-lg font-bold">공지 관리</h2>
-        <div class="mt-3 grid md:grid-cols-2 gap-4">
-          <div>
-            <div class="muted">목록</div>
-            <table class="table mt-2" id="ann-list"></table>
-          </div>
-          <div>
-            <div class="muted">추가/수정</div>
-            <div class="space-y-2 mt-2">
-              <input id="ann-title" class="input" placeholder="제목">
-              <textarea id="ann-body" class="input" rows="4" placeholder="내용"></textarea>
-              <label class="text-sm"><input id="ann-pub" type="checkbox" class="mr-1">공개</label>
-              <button id="ann-save" class="btn btn-primary w-full">저장</button>
+    <!-- Main content -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="p-6">
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section">
+          <h2 class="text-2xl font-bold mb-4">대시보드</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Stat cards will be populated here -->
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h3 class="text-sm font-medium text-gray-500">총 공고 수</h3>
+              <p id="stats-jobs" class="mt-1 text-3xl font-semibold">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h3 class="text-sm font-medium text-gray-500">총 지원 수</h3>
+              <p id="stats-apps" class="mt-1 text-3xl font-semibold">0</p>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- FAQ -->
-      <div id="tab-faq" class="card hidden">
-        <h2 class="text-lg font-bold">FAQ 관리</h2>
-        <div class="mt-3 grid md:grid-cols-2 gap-4">
-          <div>
-            <div class="muted">목록</div>
-            <table class="table mt-2" id="faq-list"></table>
+        <!-- Jobs Section -->
+        <section id="jobs-section" class="content-section hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold">채용 공고 관리</h2>
+            <button id="btn-new-job" class="btn btn-primary">새 공고 등록</button>
           </div>
-          <div>
-            <div class="muted">추가/수정</div>
-            <div class="space-y-2 mt-2">
-              <input id="faq-q" class="input" placeholder="질문">
-              <textarea id="faq-a" class="input" rows="4" placeholder="답변"></textarea>
-              <button id="faq-add" class="btn btn-primary w-full">추가</button>
-            </div>
+          <div class="bg-white rounded-lg shadow table-wrapper">
+            <table id="jobs-table">
+              <thead><tr>
+                <th>제목</th><th>회사</th><th>상태</th><th>등록일</th><th>작업</th>
+              </tr></thead>
+              <tbody><!-- Job rows will be populated here --></tbody>
+            </table>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- Jobs moderation -->
-      <div id="tab-jobs" class="card hidden">
-        <h2 class="text-lg font-bold">공고 관리</h2>
-        <div class="muted">게시 승인/비공개 전환 등</div>
-        <table class="table mt-3" id="jobs-list"></table>
+        <!-- Announcements Section -->
+        <section id="announcements-section" class="content-section hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold">공지사항 관리</h2>
+            <button id="btn-new-announcement" class="btn btn-primary">새 공지사항 등록</button>
+          </div>
+          <div class="bg-white rounded-lg shadow table-wrapper">
+            <table id="announcements-table">
+              <thead><tr>
+                <th>제목</th><th>상태</th><th>등록일</th><th>작업</th>
+              </tr></thead>
+              <tbody><!-- Announcement rows will be populated here --></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- FAQs Section -->
+        <section id="faqs-section" class="content-section hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold">FAQ 관리</h2>
+            <button id="btn-new-faq" class="btn btn-primary">새 FAQ 등록</button>
+          </div>
+          <div class="bg-white rounded-lg shadow table-wrapper">
+            <table id="faqs-table">
+              <thead><tr>
+                <th>질문</th><th>상태</th><th>등록일</th><th>작업</th>
+              </tr></thead>
+              <tbody><!-- FAQ rows will be populated here --></tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    </section>
-  </main>
+    </main>
+  </div>
+
+  <!-- Modals will be added here -->
 
   <script>
-    // ===== 1) Supabase 연결 (필요시 사용자 프로젝트 값으로 교체) =====
-    const SUPABASE_URL = "https://vdcjlatwtiyolipidial.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2psYXR3dGl5b2xpcGlkaWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MzMzOTEsImV4cCI6MjA3MjAwOTM5MX0.ByedRcuojknx3WBGKaQhWunxtPFO8OLoLX0ndU_W3aA";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Basic navigation logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const navLinks = document.querySelectorAll('.nav-link');
+      const sections = document.querySelectorAll('.content-section');
 
-    // ===== 2) 관리자 화이트리스트 (임시) =====
-    const ADMIN_EMAILS = ["admin@example.com", "le2@no-ypf.com"]; // 실제 관리자 메일로 교체
+      function updateActiveState(hash) {
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === hash) {
+            link.classList.add('bg-gray-100', 'text-gray-900');
+            link.classList.remove('text-gray-600', 'hover:bg-gray-50');
+          } else {
+            link.classList.remove('bg-gray-100', 'text-gray-900');
+            link.classList.add('text-gray-600', 'hover:bg-gray-50');
+          }
+        });
 
-    // ===== 3) 탭 =====
-    const tabs = document.querySelectorAll('.tablink');
-    tabs.forEach(btn => btn.addEventListener('click', () => selectTab(btn.dataset.tab)));
-    function selectTab(id){
-      document.querySelectorAll('section .card').forEach(el=> el.classList.add('hidden'));
-      document.getElementById(id)?.classList.remove('hidden');
-    }
+        sections.forEach(section => {
+          if ('#' + section.id.replace('-section', '') === hash) {
+            section.classList.remove('hidden');
+          } else {
+            section.classList.add('hidden');
+          }
+        });
+      }
 
-    // ===== 4) 로그인/세션 =====
-    const btnLogin = document.getElementById('btn-login');
-    const btnLogout = document.getElementById('btn-logout');
-    const whoami = document.getElementById('whoami');
+      window.addEventListener('hashchange', () => {
+        const hash = window.location.hash || '#dashboard';
+        updateActiveState(hash);
+      });
 
-    btnLogin.addEventListener('click', async ()=>{
-      const email = prompt('관리자 이메일');
-      if (!email) return;
-      const { error } = await supabase.auth.signInWithOtp({ email });
-      if (error) alert('로그인 메일 전송 실패: ' + error.message); else alert('이메일로 로그인 링크를 보냈습니다.');
+      // Initial state
+      const initialHash = window.location.hash || '#dashboard';
+      updateActiveState(initialHash);
     });
-    btnLogout.addEventListener('click', async ()=>{ await supabase.auth.signOut(); await guard(); });
-
-    async function guard(){
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session){
-        whoami.textContent = '로그인 필요';
-        btnLogin.classList.remove('hidden');
-        btnLogout.classList.add('hidden');
-        selectTab('tab-overview');
-        return;
-      }
-      const email = session.user.email;
-      whoami.textContent = '로그인: ' + email;
-      btnLogin.classList.add('hidden');
-      btnLogout.classList.remove('hidden');
-      if (!ADMIN_EMAILS.includes(email)){
-        alert('관리자 권한이 없습니다');
-        await supabase.auth.signOut();
-        whoami.textContent = '권한 없음';
-        return;
-      }
-      // 로드
-      await Promise.all([loadStats(), loadAnn(), loadFAQ(), loadJobs()]);
-      selectTab('tab-overview');
-    }
-
-    // ===== 5) Overview 통계 =====
-    async function loadStats(){
-      try{
-        const { count: jobs } = await supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('is_published', true);
-        const { count: apps } = await supabase.from('applications').select('*', { count: 'exact', head: true });
-        const meta = await Promise.all([
-          fetch('announcements.json').then(r=>r.json()).catch(()=>({items:[]})),
-          fetch('faq.json').then(r=>r.json()).catch(()=>({items:[]}))
-        ]);
-        document.getElementById('stat-jobs').textContent = jobs ?? 0;
-        document.getElementById('stat-apps').textContent = apps ?? 0;
-        const annCount = (meta[0].items||[]).length; const faqCount = (meta[1].items||[]).length;
-        document.getElementById('stat-meta').textContent = annCount + ' / ' + faqCount;
-      }catch(e){ console.warn(e); }
-    }
-
-    // ===== 6) 공지 관리 (announcements.json) =====
-    const annList = document.getElementById('ann-list');
-    const annTitle = document.getElementById('ann-title');
-    const annBody = document.getElementById('ann-body');
-    const annPub = document.getElementById('ann-pub');
-    document.getElementById('ann-save').addEventListener('click', saveAnn);
-
-    async function loadAnn(){
-      const data = await fetch('announcements.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>({items:[]}));
-      const items = Array.isArray(data.items) ? data.items : [];
-      annList.innerHTML = `<tr><th>제목</th><th>공개</th><th>날짜</th></tr>` + items.map((x,i)=>`
-        <tr>
-          <td class='pr-3'>${esc(x.title)}</td>
-          <td>${x.published? '✅':'❌'}</td>
-          <td class='text-gray-500'>${esc(x.date||'')}</td>
-        </tr>`).join('');
-    }
-
-    async function saveAnn(){
-      // 기존 파일을 읽어 배열에 push 후 저장 (정적 사이트이므로 클라이언트에서 파일 저장은 불가 → 임시로 전체 파일 덤프 문자열을 만들어 다운로드)
-      const data = await fetch('announcements.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>({items:[]}));
-      data.items = Array.isArray(data.items) ? data.items : [];
-      data.items.unshift({ title: annTitle.value||'제목', body: annBody.value||'', date: new Date().toISOString(), published: !!annPub.checked });
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'announcements.json'; a.click();
-      alert('파일이 다운로드됩니다. 서버의 기존 파일을 교체 업로드하세요.');
-    }
-
-    // ===== 7) FAQ 관리 (faq.json) =====
-    const faqTbl = document.getElementById('faq-list');
-    const faqQ = document.getElementById('faq-q');
-    const faqA = document.getElementById('faq-a');
-    document.getElementById('faq-add').addEventListener('click', addFaq);
-
-    async function loadFAQ(){
-      const data = await fetch('faq.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>({items:[]}));
-      const items = Array.isArray(data.items) ? data.items : [];
-      faqTbl.innerHTML = `<tr><th>Q</th><th>A</th></tr>` + items.map((x,i)=>`
-        <tr>
-          <td class='pr-3'>${esc(x.q)}</td>
-          <td class='text-gray-500 whitespace-pre-wrap'>${esc(x.a)}</td>
-        </tr>`).join('');
-    }
-
-    async function addFaq(){
-      const data = await fetch('faq.json',{cache:'no-store'}).then(r=>r.json()).catch(()=>({items:[]}));
-      data.items = Array.isArray(data.items) ? data.items : [];
-      data.items.unshift({ q: faqQ.value||'질문', a: faqA.value||'' });
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'faq.json'; a.click();
-      alert('파일이 다운로드됩니다. 서버의 기존 파일을 교체 업로드하세요.');
-    }
-
-    // ===== 8) Jobs moderation (Supabase) =====
-    const jobsTbl = document.getElementById('jobs-list');
-    async function loadJobs(){
-      const { data, error } = await supabase.from('jobs').select('*').order('created_at', { ascending:false });
-      if (error){ jobsTbl.innerHTML = '<tr><td class="text-rose-600">불러오기 실패: '+esc(error.message)+'</td></tr>'; return; }
-      jobsTbl.innerHTML = `<tr><th>제목</th><th>상태</th><th>액션</th></tr>` + (data||[]).map(row=>`
-        <tr>
-          <td class='pr-3'>${esc(row.title||'')}</td>
-          <td>${row.is_published? '공개':'비공개'}</td>
-          <td>
-            <button class='btn' onclick='togglePub("${row.id}", ${!!row.is_published})'>전환</button>
-          </td>
-        </tr>`).join('');
-    }
-
-    window.togglePub = async function(id, cur){
-      const { error } = await supabase.from('jobs').update({ is_published: !cur }).eq('id', id);
-      if (error) alert('실패: ' + error.message); else { alert('변경됨'); loadJobs(); }
-    }
-
-    // ===== 유틸 =====
-    function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-    // init
-    guard();
   </script>
 </body>
 </html>

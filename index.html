@@ -1,16 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- META 湲곕낯 ?ㅼ젙 -->
+  <!-- META 기본 설정 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NO?댁젙?섏씠 ??梨꾩슜/?묒뾽 (Alba?몊tyle 쨌 Beta)</title>
-  <meta name="description" content="?뚮컮泥쒓뎅 ?ㅽ??쇱쓽 由ъ뒪?명삎 UI濡??깃낵 湲곕컲(?섏씡?먯뼱/蹂대꼫?? 梨꾩슜쨌?묒뾽 怨듦퀬瑜??먯깋?섏꽭??" />
+  <title>NO정의 채용/작업 (Alba-style 쨌 Beta)</title>
+  <meta name="description" content="알바천국 스타일의 리스팅형 UI로 성과 기반(수익셰어/보너스) 채용/작업 공고를 탐색하세요" />
 
   <!-- TailwindCSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ?꾨컲 ?? 諛앷퀬 ?좊챸??由ъ뒪???ы꽭??*/
+    /* 전반 톤 밝고 명료한 리스트에 집중 */
     body{ background:#fafafa; }
     .container{ max-width: 1200px; }
     .line-clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
@@ -23,358 +23,166 @@
 
   <!-- Supabase JS (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2824624880449066"     crossorigin="anonymous"></script>
 </head>
 <body class="text-gray-900">
-  <!-- ?곷떒 怨좎젙 ?ㅻ퉬寃뚯씠??-->
+  <!-- 상단 고정 내비게이션 -->
   <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
     <div class="container mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <!-- 臾댁뾿??蹂寃쏀븯?붿?: ?쒕퉬??濡쒓퀬/?뚮뱶留덊겕 -->
-        <a href="#" class="text-xl font-extrabold">NO<span class="text-rose-600">?댁젙?섏씠</span>.COM</a>
-        <!-- 臾댁뾿??蹂寃쏀븯?붿?: 二쇱슂 ?대퉬 硫붾돱 -->
+        <!-- 무엇을 변경하든: 서비스 로고/워드마크 -->
+        <a href="#" class="text-xl font-extrabold">NO<span class="text-rose-600">정의</span>.COM</a>
+        <!-- 무엇을 변경하든: 주요 네비 메뉴 -->
         <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
-          <a href="#" class="hover:text-rose-600">梨꾩슜/?묒뾽</a>
-          <a href="#" class="hover:text-rose-600">?곷떒怨좎젙(?덇퀬)</a>
-          <a href="#guide" class="hover:text-rose-600">?덉쟾媛?대뱶</a>
+          <a href="#" class="hover:text-rose-600">채용/작업</a>
+          <a href="#" class="hover:text-rose-600">상단고정(안내)</a>
+          <a href="#guide" class="hover:text-rose-600">안전가이드</a>
         </nav>
       </div>
       <div class="flex items-center gap-2">
-        <!-- 臾댁뾿??蹂寃쏀븯?붿?: 濡쒓렇??濡쒓렇?꾩썐 踰꾪듉 -->
-        <button id="btn-login" class="btn btn-ghost">濡쒓렇??/button>
-        <button id="btn-logout" class="btn btn-primary hidden">濡쒓렇?꾩썐</button>
-        <a href="#post" class="hidden sm:inline-flex btn btn-primary">怨듦퀬 ?깅줉</a>
+        <!-- 무엇을 변경하든: 로그인/로그아웃 버튼 -->
+        <button id="btn-login" class="btn btn-ghost">로그인</button>
+        <button id="btn-logout" class="btn btn-primary hidden">로그아웃</button>
+        <a href="#post" class="hidden sm:inline-flex btn btn-primary">공고 등록</a>
       </div>
     </div>
   </header>
 
-  <!-- ?곷떒 寃?됰컮 (Alba ?ㅽ???李멸퀬: ??寃??+ ?꾪꽣 諛? -->
+  <!-- 상단 검색바 (Alba 스타일 참고: 통검 + 필터 바) -->
   <section class="border-b bg-white">
     <div class="container mx-auto px-4 py-4">
-      <!-- 臾댁뾿??蹂寃쏀븯?붿?: ?곷떒 ?ㅼ썙???꾪꽣 ?낅젰 UI -->
+      <!-- 무엇을 변경하든: 상단 키워드/필터 입력 UI -->
       <div class="grid md:grid-cols-12 gap-3">
         <div class="md:col-span-5">
-          <input id="q" type="text" class="w-full rounded-xl border px-3 py-2" placeholder="?ㅼ썙???? ?꾨줎?몄뿏?? ?곸긽?몄쭛, React)">
+          <input id="q" type="text" class="w-full rounded-xl border px-3 py-2" placeholder="키워드 (예: 프론트엔드, 영상편집, React)">
         </div>
         <div class="md:col-span-2">
           <select id="loc" class="w-full rounded-xl border px-3 py-2">
-            <option value="">吏???꾩껜)</option>
-            <option>?쒖슱</option><option>遺??/option><option>?援?/option><option>寃쎄린</option><option>?⑤씪??/option>
+            <option value="">지역(전체)</option>
+            <option>서울</option><option>부산</option><option>대구</option><option>경기</option><option>온라인</option>
           </select>
         </div>
         <div class="md:col-span-2">
           <select id="cat" class="w-full rounded-xl border px-3 py-2">
-            <option value="">遺꾨쪟(?꾩껜)</option>
-            <option>媛쒕컻</option><option>?붿옄??/option><option>?곸긽/肄섑뀗痢?/option><option>留덉????몄씪利?/option><option>?댁쁺/CS</option>
+            <option value="">분류(전체)</option>
+            <option>개발</option><option>디자인</option><option>영상/콘텐츠</option><option>마케팅/세일즈</option><option>운영/CS</option>
           </select>
         </div>
         <div class="md:col-span-2">
           <select id="reward" class="w-full rounded-xl border px-3 py-2">
-            <option value="">蹂댁긽(?꾩껜)</option>
-            <option value="share">?섏씡?먯뼱</option>
-            <option value="bounty">嫄대떦 蹂대꼫??/option>
-            <option value="hybrid">?섏씠釉뚮━??/option>
+            <option value="">보상(전체)</option>
+            <option value="share">수익셰어</option>
+            <option value="bounty">건당 보너스</option>
+            <option value="hybrid">하이브리드</option>
           </select>
         </div>
         <div class="md:col-span-1">
-          <button id="btn-search" class="w-full btn btn-primary">寃??/button>
+          <button id="btn-search" class="w-full btn btn-primary">검색</button>
         </div>
       </div>
-      <!-- 臾댁뾿??蹂寃쏀븯?붿?: ???쒓렇 踰꾪듉??-->
+      <!-- 무엇을 변경하든: 추천태그 버튼들 -->
       <div class="mt-3 flex flex-wrap gap-2 text-xs">
-        <button class="tag" data-q="?먭꺽">#?먭꺽</button>
-        <button class="tag" data-q="?④린">#?④린</button>
-        <button class="tag" data-q="?κ린">#?κ린</button>
-        <button class="tag" data-q="?붿옄??>#?붿옄??/button>
+        <button class="tag" data-q="재택">#재택</button>
+        <button class="tag" data-q="단기">#단기</button>
+        <button class="tag" data-q="장기">#장기</button>
+        <button class="tag" data-q="디자인">#디자인</button>
         <button class="tag" data-q="React">#React</button>
       </div>
     </div>
   </section>
 
-  <!-- 硫붿씤 ?덉씠?꾩썐: 由ъ뒪??+ ?ъ씠?쒕컮 -->
+  <!-- 메인 레이아웃: 리스트 + 사이드바 -->
   <main class="container mx-auto px-4 py-6 grid md:grid-cols-12 gap-6">
-    <!-- 由ъ뒪???곸뿭 -->
+    <!-- 리스트 영역 -->
     <section class="md:col-span-9">
-      <!-- 臾댁뾿??蹂寃쏀븯?붿?: ?뺣젹/寃곌낵 ???쒖떆 諛?-->
+      <!-- 무엇을 변경하든: 정렬/결과 수 표시 바 -->
       <div class="mb-3 flex items-center justify-between text-sm text-gray-600">
-        <div><span id="result-count">0</span>嫄댁쓽 怨듦퀬</div>
+        <div><span id="result-count">0</span>건의 공고</div>
         <div class="flex items-center gap-2">
-          <label>?뺣젹</label>
+          <label>정렬</label>
           <select id="sort" class="rounded-lg border px-2 py-1">
-            <option value="recent">理쒖떊??/option>
+            <option value="recent">최신순</option>
           </select>
         </div>
       </div>
       <div id="list" class="grid gap-3"></div>
-      <!-- ?섏씠吏?ㅼ씠??-->
+      <!-- 페이지네이션 -->
       <div class="mt-4 flex items-center justify-center gap-2">
-        <button id="prev" class="btn btn-ghost">?댁쟾</button>
+        <button id="prev" class="btn btn-ghost">이전</button>
         <span id="page" class="text-sm text-gray-600">1</span>
-        <button id="next" class="btn btn-ghost">?ㅼ쓬</button>
+        <button id="next" class="btn btn-ghost">다음</button>
       </div>
     </section>
 
-    <!-- ?ъ씠?쒕컮: 移댄뀒怨좊━/?덈궡/理쒓렐 蹂?怨듦퀬 -->
+    <!-- 사이드바: 카테고리/안내/최근 본 공고 -->
     <aside class="md:col-span-3 space-y-3">
       <div class="rounded-2xl border bg-white p-4">
-        <h3 class="font-bold">移댄뀒怨좊━</h3>
+        <h3 class="font-bold">카테고리</h3>
         <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
-          <button class="tag" data-cat="媛쒕컻">媛쒕컻</button>
-          <button class="tag" data-cat="?붿옄??>?붿옄??/button>
-          <button class="tag" data-cat="?곸긽/肄섑뀗痢?>?곸긽/肄섑뀗痢?/button>
-          <button class="tag" data-cat="留덉????몄씪利?>留덉????몄씪利?/button>
-          <button class="tag" data-cat="?댁쁺/CS">?댁쁺/CS</button>
-          <button class="tag" data-cat="">?꾩껜</button>
+          <button class="tag" data-cat="개발">개발</button>
+          <button class="tag" data-cat="디자인">디자인</button>
+          <button class="tag" data-cat="영상/콘텐츠">영상/콘텐츠</button>
+          <button class="tag" data-cat="마케팅/세일즈">마케팅/세일즈</button>
+          <button class="tag" data-cat="운영/CS">운영/CS</button>
+          <button class="tag" data-cat="">전체</button>
         </div>
       </div>
       <div class="rounded-2xl border bg-white p-4" id="recent-box">
-        <h3 class="font-bold">理쒓렐 蹂?怨듦퀬</h3>
+        <h3 class="font-bold">최근 본 공고</h3>
         <div id="recent" class="mt-2 space-y-2 text-sm text-gray-700"></div>
       </div>
       <div class="rounded-2xl border bg-white p-4" id="guide">
-        <h3 class="font-bold">?덉쟾/媛?대뱶</h3>
+        <h3 class="font-bold">안전/가이드</h3>
         <ul class="mt-2 list-disc list-inside text-sm text-gray-700">
-          <li>?섏씡?먯뼱 %쨌罹≤룹?湲??몃━嫄??꾩닔</li>
-          <li>臾닿툒 ?곸떆洹쇰줈 ?泥?遺덇?</li>
-          <li>遺꾩웳 ?덈갑: ?꾩옄?쒕챸쨌利앸튃 蹂닿?</li>
+          <li>수익셰어 %/캡/지급 트리거 필수</li>
+          <li>무급 상시근로 대체 불가</li>
+          <li>분쟁 예방: 전자서명/증빙 보관</li>
         </ul>
       </div>
     </aside>
   </main>
 
-  <!-- ?곸꽭 紐⑤떖 -->
+  <!-- 상세 모달 -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
     <div class="w-full max-w-2xl rounded-2xl bg-white p-6">
       <div class="flex items-start justify-between">
         <h3 id="modal-title" class="text-lg font-bold"></h3>
-        <button id="modal-close" class="text-gray-500">?リ린</button>
+        <button id="modal-close" class="text-gray-500">닫기</button>
       </div>
       <div id="modal-body" class="mt-3 text-sm text-gray-700"></div>
       <div class="mt-4 flex items-center justify-end gap-2">
-        <button id="btn-apply" class="btn btn-primary">吏??臾몄쓽</button>
+        <button id="btn-apply" class="btn btn-primary">지원 문의</button>
       </div>
     </div>
   </div>
 
-  <!-- ?ㅽ겕由쏀듃: Supabase 珥덇린??+ ?곗씠???몄쬆/利먭꺼李얘린/理쒓렐 蹂?怨듦퀬 -->
-  <script>
-    /* =========================
-     * 1) Supabase ?꾨줈?앺듃 ?곌껐 (?ㅼ젣 媛??낅젰)
-     * ========================= */
-    // 臾댁뾿??蹂寃쏀븯?붿?: 蹂몄씤 ?꾨줈?앺듃 URL/?ㅻ줈 援먯껜 媛??(?대? ?ъ슜??媛??곸슜)
-    const SUPABASE_URL = "https://vdcjlatwtiyolipidial.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2psYXR3dGl5b2xpcGlkaWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MzMzOTEsImV4cCI6MjA3MjAwOTM5MX0.ByedRcuojknx3WBGKaQhWunxtPFO8OLoLX0ndU_W3aA";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script src="main.js" defer></script>
 
-    /* =========================
-     * 2) DOM 李몄“
-     * ========================= */
-    const btnLogin = document.getElementById('btn-login');
-    const btnLogout = document.getElementById('btn-logout');
-    const qEl = document.getElementById('q');
-    const locEl = document.getElementById('loc');
-    const catEl = document.getElementById('cat');
-    const rewardEl = document.getElementById('reward');
-    const btnSearch = document.getElementById('btn-search');
-    const sortEl = document.getElementById('sort');
+  <!-- 광고 팝업 모달 -->
+  <div id="ad-popup" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center">
+      <h3 class="font-bold text-lg">광고주를 찾습니다</h3>
+      <p class="mt-2 text-sm text-gray-600">
+        (처음 계약 3개월간 무료 광고 서비스 제공)
+      </p>
+      <div class="mt-4 flex justify-center gap-2">
+        <button id="ad-close-today" class="btn btn-ghost">오늘 하루 보지 않기</button>
+        <button id="ad-close" class="btn btn-primary">닫기</button>
+      </div>
+    </div>
+  </div>
 
-    const listEl = document.getElementById('list');
-    const resultCountEl = document.getElementById('result-count');
-    const prevEl = document.getElementById('prev');
-    const nextEl = document.getElementById('next');
-    const pageEl = document.getElementById('page');
-
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalBody = document.getElementById('modal-body');
-    const modalClose = document.getElementById('modal-close');
-    const btnApply = document.getElementById('btn-apply');
-
-    const recentEl = document.getElementById('recent');
-
-    /* =========================
-     * 3) 濡쒓렇??濡쒓렇?꾩썐 (留ㅼ쭅留곹겕)
-     * ========================= */
-    async function refreshAuthUI(){
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) { btnLogin.classList.add('hidden'); btnLogout.classList.remove('hidden'); }
-      else { btnLogout.classList.add('hidden'); btnLogin.classList.remove('hidden'); }
-    }
-
-    btnLogin?.addEventListener('click', async () => {
-      const email = prompt('濡쒓렇???대찓?쇱쓣 ?낅젰?섏꽭??);
-      if (!email) return;
-      const { error } = await supabase.auth.signInWithOtp({ email });
-      if (error) alert('濡쒓렇??硫붿씪 ?꾩넚 ?ㅽ뙣: ' + error.message);
-      else alert('?대찓?쇰줈 濡쒓렇??留곹겕瑜?蹂대깉?듬땲??');
-    });
-
-    btnLogout?.addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      refreshAuthUI();
-    });
-
-    /* =========================
-     * 4) ?곗씠??濡쒕뵫/寃???섏씠吏
-     * ========================= */
-    let page = 1;
-    const PAGE_SIZE = 12;
-
-    async function fetchJobs(){
-      let query = supabase.from('jobs').select('*', { count: 'exact' }).eq('is_published', true);
-
-      const q = qEl.value?.trim();
-      if (q) query = query.or(`title.ilike.%${q}%,company.ilike.%${q}%,desc.ilike.%${q}%`);
-
-      const loc = locEl.value; if (loc) query = query.eq('location', loc);
-      const cat = catEl.value; if (cat) query = query.eq('category', cat);
-      const rew = rewardEl.value; if (rew) query = query.eq('reward_type', rew);
-
-      const from = (page-1) * PAGE_SIZE; const to = from + PAGE_SIZE - 1;
-      const { data, error, count } = await query.order('created_at', { ascending:false }).range(from, to);
-      if (error){ listEl.innerHTML = `<div class='rounded-xl border bg-white p-4 text-rose-700 text-sm'>遺덈윭?ㅺ린 ?ㅽ뙣: ${error.message}</div>`; return; }
-
-      renderList(data || []);
-      resultCountEl.textContent = count ?? 0;
-      pageEl.textContent = String(page);
-      prevEl.disabled = page <= 1;
-      nextEl.disabled = (page * PAGE_SIZE) >= (count || 0);
-    }
-
-    function renderList(rows){
-      if (!rows.length){
-        listEl.innerHTML = `<div class='rounded-xl border bg-white p-6 text-center text-sm text-gray-600'>議곌굔??留욌뒗 怨듦퀬媛 ?놁뒿?덈떎.</div>`; return;
-      }
-      listEl.innerHTML = rows.map(row => JobCard(row)).join('');
-      document.querySelectorAll('[data-job]')?.forEach(el => {
-        el.addEventListener('click', (e) => {
-          const row = JSON.parse(el.dataset.job);
-          openModal(row);
-          addRecent(row);
-        });
-      });
-      document.querySelectorAll('[data-fav]')?.forEach(el => {
-        el.addEventListener('click', (e) => { e.stopPropagation(); toggleFav(el.dataset.fav); });
-      });
-      hydrateFavs();
-    }
-
-    function pill(reward){ return reward==='share'?'?섏씡?먯뼱':reward==='bounty'?'嫄대떦 蹂대꼫??:'?섏씠釉뚮━??; }
-
-    function JobCard(row){
-      const isFav = getFavs().includes(row.id);
-      return `
-        <article class="group rounded-2xl border bg-white p-4 hover:shadow-sm cursor-pointer" data-job='${jsonEscape(row)}'>
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <div class="text-xs text-gray-500">${escapeHtml(row.category||'湲고?')} 쨌 ${escapeHtml(row.duration||'-')} 쨌 ${escapeHtml(row.location||'?⑤씪??)}</div>
-              <h3 class="mt-0.5 text-base font-bold group-hover:text-rose-700">${escapeHtml(row.title)}</h3>
-              <p class="mt-1 text-sm text-gray-700 line-clamp-2">${escapeHtml(row.short||row.desc||'')}</p>
-              <div class="mt-2 flex flex-wrap gap-2 text-xs text-gray-600">
-                <span class="badge">${pill(row.reward_type)}</span>
-                ${row.share?`<span class="badge">${escapeHtml(row.share)}</span>`:''}
-                ${row.cap?`<span class="badge">罹?${escapeHtml(row.cap)}</span>`:''}
-                ${row.trigger?`<span class="badge">?몃━嫄?${escapeHtml(row.trigger)}</span>`:''}
-              </div>
-            </div>
-            <div class="text-right min-w-28">
-              <button class="text-gray-400 hover:text-rose-600" title="利먭꺼李얘린" data-fav="${row.id}">
-                ${isFav? '??:'??}
-              </button>
-              <div class="text-xs text-gray-500 mt-2">${escapeHtml(row.company||'')}</div>
-              <div class="text-xs text-gray-400">${new Date(row.created_at).toLocaleDateString('ko-KR')}</div>
-              <button class="mt-2 btn btn-primary">?곸꽭蹂닿린</button>
-            </div>
-          </div>
-        </article>`;
-    }
-
-    // ?좏떥: XSS 諛⑹? 諛??곗씠??吏곷젹??
-    function escapeHtml(str){ return String(str||'').replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s])); }
-    function jsonEscape(obj){ return escapeHtml(JSON.stringify(obj)); }
-
-    /* =========================
-     * 5) ?곸꽭 紐⑤떖 + 吏??
-     * ========================= */
-    function openModal(row){
-      modalTitle.textContent = row.title;
-      modalBody.innerHTML = `
-        <div class="text-sm text-gray-700">
-          <div class="text-gray-500">${escapeHtml(row.company||'')} 쨌 ${escapeHtml(row.location||'?⑤씪??)}</div>
-          <div class="mt-2 whitespace-pre-wrap">${escapeHtml(row.desc||'')}</div>
-          <div class="mt-3 flex flex-wrap gap-2 text-xs">
-            ${row.reward_type?`<span class='badge'>${pill(row.reward_type)}</span>`:''}
-            ${row.share?`<span class='badge'>?섏씡?먯뼱 ${escapeHtml(row.share)}</span>`:''}
-            ${row.cap?`<span class='badge'>罹?${escapeHtml(row.cap)}</span>`:''}
-            ${row.trigger?`<span class='badge'>吏湲??몃━嫄?${escapeHtml(row.trigger)}</span>`:''}
-          </div>
-        </div>`;
-      btnApply.onclick = () => applyJob(row);
-      modal.classList.remove('hidden'); modal.classList.add('flex');
-    }
-    modalClose?.addEventListener('click', ()=>{ modal.classList.add('hidden'); modal.classList.remove('flex'); });
-
-    async function applyJob(row){
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session){ alert('濡쒓렇?????댁슜?댁＜?몄슂.'); return; }
-      const email = prompt('?곕씫諛쏆쓣 ?대찓???ы듃?대━??留곹겕瑜??낅젰?섏꽭??);
-      if (!email) return;
-      const { error } = await supabase.from('applications').insert({ job_id: row.id, applicant_email: email, note: '踰좏? 媛꾪렪吏?? });
-      if (error) alert('吏???ㅽ뙣: ' + error.message); else alert('吏?먯씠 ?묒닔?섏뿀?듬땲??');
-    }
-
-    /* =========================
-     * 6) 利먭꺼李얘린/理쒓렐 蹂?怨듦퀬 (濡쒖뺄?ㅽ넗由ъ?)
-     * ========================= */
-    function getFavs(){ try{ return JSON.parse(localStorage.getItem('favJobs')||'[]'); }catch{ return []; } }
-    function setFavs(arr){ localStorage.setItem('favJobs', JSON.stringify(arr)); }
-    function toggleFav(id){ const cur=getFavs(); const i=cur.indexOf(id); if(i>-1) cur.splice(i,1); else cur.unshift(id); setFavs(cur); hydrateFavs(); }
-    function hydrateFavs(){
-      document.querySelectorAll('[data-fav]')?.forEach(btn=>{
-        const id = btn.dataset.fav; const isFav = getFavs().includes(id);
-        btn.textContent = isFav ? '?? : '??;
-      });
-    }
-
-    function addRecent(row){
-      let rec = [];
-      try{ rec = JSON.parse(localStorage.getItem('recentJobs')||'[]'); }catch{}
-      rec = rec.filter(r=>r.id!==row.id);
-      rec.unshift({ id: row.id, title: row.title });
-      rec = rec.slice(0,6);
-      localStorage.setItem('recentJobs', JSON.stringify(rec));
-      renderRecent();
-    }
-    function renderRecent(){
-      let rec=[]; try{ rec=JSON.parse(localStorage.getItem('recentJobs')||'[]'); }catch{}
-      if (!rec.length){ recentEl.innerHTML = '<div class="text-xs text-gray-500">?꾩쭅 ?놁쓬</div>'; return; }
-      recentEl.innerHTML = rec.map(r=>`<div class='truncate'>??${escapeHtml(r.title)}</div>`).join('');
-    }
-
-    /* =========================
-     * 7) ?대깽??諛붿씤??& 珥덇린 ?ㅽ뻾
-     * ========================= */
-    btnSearch?.addEventListener('click', ()=>{ page=1; fetchJobs(); });
-    document.querySelectorAll('.tag[data-q]')?.forEach(t=> t.addEventListener('click', ()=>{ qEl.value=t.dataset.q; page=1; fetchJobs(); }));
-    document.querySelectorAll('.tag[data-cat]')?.forEach(t=> t.addEventListener('click', ()=>{ catEl.value=t.dataset.cat; page=1; fetchJobs(); }));
-    prevEl?.addEventListener('click', ()=>{ if(page>1){ page--; fetchJobs(); }});
-    nextEl?.addEventListener('click', ()=>{ page++; fetchJobs(); });
-
-    refreshAuthUI();
-    renderRecent();
-    fetchJobs();
-  </script>
-
-  <!-- ?명꽣 -->
+  <!-- 푸터 -->
   <footer class="mt-10 border-t bg-white">
     <div class="container mx-auto px-4 py-8 text-sm text-gray-600 grid md:grid-cols-2 gap-4">
       <div>
-        <div class="font-extrabold">NO?댁젙?섏씠.COM</div>
-        <p class="mt-2">?뚮컮泥쒓뎅 ?먮굦??由ъ뒪?명삎 UI濡? ?깃낵 湲곕컲 ?묒뾽 留ㅼ묶??鍮좊Ⅴ寃??쒖옉?섏꽭?? (踰좏?)</p>
+        <div class="font-extrabold">NO정의.COM</div>
+        <p class="mt-2">알바천국 대용의 리스팅형 UI로 성과 기반 작업 매칭을 빠르게 시작하세요 (베타)</p>
       </div>
       <div class="md:text-right space-x-4">
-        <a href="#guide" class="hover:text-rose-700">?댁슜?쎄?(?덇퀬)</a>
-        <a href="#guide" class="hover:text-rose-700">媛쒖씤?뺣낫泥섎━諛⑹묠(?덇퀬)</a>
-        <span class="text-gray-400">짤 2025</span>
+        <a href="#guide" class="hover:text-rose-700">이용약관(안내)</a>
+        <a href="#guide" class="hover:text-rose-700">개인정보처리방침(안내)</a>
+        <span class="text-gray-400">© 2025</span>
       </div>
     </div>
   </footer>
@@ -408,6 +216,3 @@
 <!-- [safety-guide:end] -->
 </body>
 </html>
-
-
-
