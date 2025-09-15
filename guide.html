@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- [01] HEAD & META 기본 -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- [01-1] SEO 및 공유용 메타 태그 -->
+  <title>안전가이드 - NO열정페이</title>
+  <meta name="description" content="NO열정페이 플랫폼을 안전하게 이용하기 위한 가이드입니다." />
+  <link rel="canonical" href="https://no열정페이.com/guide.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="안전가이드 - NO열정페이" />
+  <meta property="og:description" content="NO열정페이 플랫폼을 안전하게 이용하기 위한 가이드입니다." />
+  <meta property="og:url" content="https://no열정페이.com/guide.html" />
+  <meta property="og:site_name" content="NO열정페이" />
+  <meta property="og:image" content="https://no열정페이.com/social-preview.png" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="안전가이드 - NO열정페이" />
+  <meta name="twitter:description" content="NO열정페이 플랫폼을 안전하게 이용하기 위한 가이드입니다." />
+  <meta name="twitter:image" content="https://no열정페이.com/social-preview.png" />
+
+  <!-- [01-2] 외부 스크립트(Tailwind, Ads 등) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- [02] 전역 CSS (빌드 없이 동작) -->
+  <style>
+    body{ background:#fafafa; }
+    .container{ max-width:1200px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; border-radius:0.75rem; padding:0.5rem 0.75rem; font-size:0.875rem; font-weight:600; }
+    .btn-primary{ background:#e11d48; color:#fff; } .btn-primary:hover{ background:#be123c; }
+  </style>
+</head>
+<body class="text-gray-900">
+
+  <!-- [04] 상단 헤더/내비게이션 -->
+  <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-xl font-extrabold">
+          <!-- [TXT-01: 워드마크] -->NO<span class="text-rose-600">열정페이</span>.COM
+        </a>
+        <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
+          <a href="index.html" class="hover:text-rose-600"><!-- [TXT-04a] -->채용/작업</a>
+          <a href="#" class="hover:text-rose-600"><!-- [TXT-04b] -->상단고정(안내)</a>
+          <a href="guide.html" class="hover:text-rose-600 font-bold text-rose-600"><!-- [TXT-04c] -->안전가이드</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="index.html#post" class="hidden sm:inline-flex btn btn-primary"><!-- [TXT-04g] -->공고 등록</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- [13] 안전/가이드(본문 섹션) -->
+  <main class="bg-white">
+    <section id="guide" class="max-w-3xl mx-auto px-4 py-12">
+      <h2 class="text-3xl font-bold">안전/가이드</h2>
+      <p class="mt-4 text-gray-700">
+        본 플랫폼은 구인·구직 당사자가 자율적으로 계약을 체결하도록 돕는 중개 도구입니다. 계약의 법적 효력과 책임은 당사자에게 귀속됩니다.
+      </p>
+      <h3 class="mt-6 text-xl font-semibold">계약서 작성 시 주의</h3>
+      <ul class="mt-2 list-disc list-inside text-gray-700 space-y-1">
+        <li>반드시 <strong>서면 계약</strong>으로 체결 (구두합의 지양)</li>
+        <li>근로형태/역할/책임/보수/지급시기/분쟁절차 명시</li>
+        <li>개인정보 보호 및 관련 법령(근로기준법·민법·상법 등) 준수</li>
+      </ul>
+      <h3 class="mt-6 text-xl font-semibold">수익 분배 가이드</h3>
+      <ul class="mt-2 list-disc list-inside text-gray-700 space-y-1">
+        <li>시작 전 <strong>비율·기준</strong> 합의(기여도·위험·자본 반영)</li>
+        <li>지분/매출쉐어/성과보너스 구조 명확화, 정산 근거 보관</li>
+      </ul>
+      <h3 class="mt-6 text-xl font-semibold">법적 고지</h3>
+      <p class="mt-2 text-gray-700">
+        플랫폼은 표준계약서·가이드·법률상담 연계를 제공할 수 있으나 계약 당사자는 아닙니다. 분쟁 시 중재/조정/소송 절차를 사용할 수 있습니다.
+      </p>
+    </section>
+  </main>
+
+  <!-- [09] 푸터 -->
+  <footer class="border-t bg-gray-50">
+    <div class="container mx-auto px-4 py-8 text-sm text-gray-600 text-center">
+        <a href="guide.html" class="hover:text-rose-700">이용약관</a>
+        <span class="mx-2">|</span>
+        <a href="guide.html" class="hover:text-rose-700">개인정보처리방침</a>
+        <p class="text-gray-400 mt-4">© 2025 NO열정페이.COM</p>
+    </div>
+  </footer>
+
+</body>
+</html>
