@@ -183,18 +183,50 @@
     </div>
   </div>
 
-  <!-- [09] 푸터 -->
-  <footer class="mt-10 border-t bg-white">
-    <div class="container mx-auto px-4 py-8 text-sm text-gray-600 grid md:grid-cols-2 gap-4">
-      <div>
-        <div class="font-extrabold"><!-- [TXT-09a] -->NO열정페이.COM</div>
-        <p class="mt-2"><!-- [TXT-09b] -->성과 기반 작업 매칭을 빠르게 시작하세요 (베타)</p>
+  <!-- [09] 푸터 (개선됨) -->
+  <footer class="mt-10 border-t bg-gray-50 text-gray-600">
+    <!-- 상단 링크 메뉴 -->
+    <div class="border-b">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-center md:justify-start -mb-px">
+          <a href="#" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">회사소개</a>
+          <a href="guide.html" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">이용약관</a>
+          <a href="guide.html" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium"><strong>개인정보처리방침</strong></a>
+          <a href="#" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">고객센터</a>
+          <a href="faq.html" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">FAQ</a>
+        </div>
       </div>
-      <div class="md:text-right space-x-4">
-        <button id="open-support" class="btn btn-ghost"><!-- [TXT-09c] -->후원 안내</button>
-        <a href="guide.html" class="hover:text-rose-700"><!-- [TXT-09d] -->이용약관(안내)</a>
-        <a href="guide.html" class="hover:text-rose-700"><!-- [TXT-09e] -->개인정보처리방침(안내)</a>
-        <span class="text-gray-400">© <!-- [TXT-09f] -->2025</span>
+    </div>
+
+    <!-- 본문 정보 -->
+    <div class="container mx-auto px-4 py-8">
+      <div class="grid md:grid-cols-12 gap-8">
+        <div class="md:col-span-8 text-xs space-y-3">
+          <div class="font-bold text-base text-gray-800">NO열정페이.COM</div>
+          <div class="space-y-1">
+            <!-- TODO: 아래 회사 정보를 실제 정보로 수정하세요. -->
+            <p>(주)노열정페이 | 대표: 홍길동 | 사업자등록번호: 000-00-00000 | 통신판매업신고: 제2025-서울강남-00000호</p>
+            <p>주소: 서울특별시 강남구 테헤란로 000, 00층 (역삼동) | 개인정보보호책임자: 김철수</p>
+            <p>고객센터: 1588-0000 (평일 10:00~18:00, 점심 12:00~13:00) | 이메일: contact@no-yp.com</p>
+          </div>
+          <p class="text-gray-500">NO열정페이는 통신판매중개자이며, 통신판매의 당사자가 아닙니다. 개별 판매자가 등록한 공고 및 내용에 대하여 NO열정페이는 일체의 책임을 지지 않습니다.</p>
+        </div>
+        <div class="md:col-span-4">
+          <div class="font-semibold">소셜 미디어</div>
+          <div class="flex space-x-3 mt-2">
+            <!-- TODO: 실제 소셜 미디어 링크로 수정하세요. -->
+            <a href="#" class="text-sm hover:text-rose-600">블로그</a>
+            <a href="#" class="text-sm hover:text-rose-600">페이스북</a>
+            <a href="#" class="text-sm hover:text-rose-600">인스타그램</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 저작권 -->
+    <div class="bg-gray-100">
+      <div class="container mx-auto px-4 py-4 text-center text-xs text-gray-500">
+        &copy; 2025 NO열정페이.COM. All rights reserved.
       </div>
     </div>
   </footer>
