@@ -28,7 +28,14 @@
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
 # Edge Function 매핑: /admin* 보호
-  edge_functions = "netlify/edge-functions"
 
 [functions]
   directory = "netlify/functions/"
+
+[[edge_functions]]
+  path = "/admin"
+  function = "protect-admin"
+
+[[edge_functions]]
+  path = "/admin.html"
+  function = "protect-admin"
