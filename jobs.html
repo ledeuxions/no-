@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NO열정페이 - 채용 공고</title>
+  <meta name="description" content="성과 기반(수익셰어/보너스) 채용·협업 공고를 검색하세요" />
+  <link rel="canonical" href="https://no열정페이.com/jobs" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{ background:#fafafa; }
+    .container{ max-width:1200px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; border-radius:0.75rem; padding:0.5rem 0.75rem; font-size:0.875rem; font-weight:600; }
+    .btn-primary{ background:#e11d48; color:#fff; } .btn-primary:hover{ background:#be123c; }
+    .btn-ghost{ border:1px solid #e5e7eb; background:#fff; } .btn-ghost:hover{ background:#f9fafb; }
+  </style>
+</head>
+<body class="text-gray-900">
+
+  <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
+    <div class="container mx-auto px-4 h-16 flex items-center">
+      <div class="flex-1 flex items-center gap-4">
+        <a href="index.html" class="text-xl font-extrabold">
+          NO<span class="text-rose-600">열정페이</span>.COM
+        </a>
+        <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
+          <a href="jobs.html" class="hover:text-rose-600">채용/작업</a>
+          <a href="#" class="hover:text-rose-600">상단고정(안내)</a>
+          <a href="guide.html" class="hover:text-rose-600">안전가이드</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href='post-job.html' class='inline-flex btn btn-primary'>공고 등록</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">채용 공고</h1>
+        <a href="post-job.html" class="btn btn-primary">공고 등록하기</a>
+    </div>
+    <div id="job-listings" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Job listings will be dynamically inserted here -->
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('jobs.json')
+        .then(response => response.json())
+        .then(jobs => {
+          const jobListings = document.getElementById('job-listings');
+          if (jobs.length === 0) {
+            jobListings.innerHTML = '<p>등록된 공고가 없습니다.</p>';
+            return;
+          }
+          jobs.forEach(job => {
+            const jobCard = `
+              <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold">${job.title}</h2>
+                <p class="text-gray-600">${job.company}</p>
+                <p class="mt-2">${job.description}</p>
+                <div class="mt-4">
+                  <span class="text-sm font-semibold">보상: ${job.reward}</span>
+                </div>
+              </div>
+            `;
+            jobListings.innerHTML += jobCard;
+          });
+        });
+    });
+  </script>
+  <script src="main.js"></script>
+
+</body>
+</html>
+
