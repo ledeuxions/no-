@@ -1,43 +1,7 @@
-[build]
-  publish = "."
-
-# /admin → /admin.html 그대로 서빙
-[[redirects]]
-  from = "/admin"
-  to   = "/admin.html"
-  status = 200
-
-# JSON은 항상 최신(캐시 금지)
-[[headers]]
-  for = "/announcements.json"
-  [headers.values]
-    Cache-Control = "no-store, must-revalidate"
-
-[[headers]]
-  for = "/faq.json"
-  [headers.values]
-    Cache-Control = "no-store, must-revalidate"
-
-# 기본 보안 헤더
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "SAMEORIGIN"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-
-# Edge Function 매핑: /admin* 보호
-
-[functions]
-  directory = "netlify/functions/"
-
-[[edge_functions]]
-  path = "/admin"
-  function = "protect-admin"
-
-[[edge_functions]]
-  path = "/admin.html"
-  function = "protect-admin"
-[build]
+﻿[build]
   functions = "netlify/functions"
+
+[build.environment]
+  GIT_OWNER = "ledeuxions"
+  GIT_REPO = "no-"
+  GIT_BASE_BRANCH = "main"
