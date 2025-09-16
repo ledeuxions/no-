@@ -39,3 +39,5 @@
 [[edge_functions]]
   path = "/admin.html"
   function = "protect-admin"
+[build]
+  functions = "netlify/functions"
