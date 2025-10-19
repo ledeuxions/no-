@@ -1,362 +1,733 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- [01] HEAD & META 기본 -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- [01-1] SEO 및 공유용 메타 태그 (수정됨) -->
-  <title>NO열정페이 - 성과 기반(수익쉐어/보너스) 채용·협업</title>
-  <meta name="description" content="성과 기반(수익셰어/보너스) 채용·협업 공고를 검색하세요" />
-  <!-- TODO: 사이트가 실제 운영될 도메인 주소로 변경해주세요. 예: https://no열정페이.com -->
-  <link rel="canonical" href="https://no열정페이.com" />
-
-  <!-- Open Graph (카카오톡, 페이스북 등) -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="NO열정페이 - 성과 기반(수익쉐어/보너스) 채용·협업" />
-  <meta property="og:description" content="성과 기반(수익셰어/보너스) 채용·협업 공고를 검색하세요" />
-  <meta property="og:url" content="https://no열정페이.com" /> <!-- TODO: 위와 동일한 주소로 변경 -->
-  <meta property="og:site_name" content="NO열정페이" />
-  <!-- TODO: 카톡/페이스북 공유 시 보일 이미지 파일의 전체 주소를 입력해주세요. 예: https://no열정페이.com/social-preview.png -->
-  <meta property="og:image" content="https://no열정페이.com/images/social-preview.png" />
-  <meta property="og:locale" content="ko_KR" />
-
-  <!-- Twitter 카드 -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="NO열정페이 - 성과 기반(수익쉐어/보너스) 채용·협업" />
-  <meta name="twitter:description" content="성과 기반(수익셰어/보너스) 채용·협업 공고를 검색하세요" />
-  <!-- TODO: 트위터 공유 시 보일 이미지 파일의 전체 주소를 입력해주세요. 예: https://no열정페이.com/social-preview.png -->
-  <meta name="twitter:image" content="https://no열정페이.com/images/social-preview.png" />
-
-  <!-- [01-2] 외부 스크립트(Tailwind, Ads 등) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2824624880449066" crossorigin="anonymous"></script>
-
-  <!-- [02] 전역 CSS (빌드 없이 동작) -->
-  <style>
-    body{ background:#fafafa; }
-    .container{ max-width:1200px; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; border-radius:0.75rem; padding:0.5rem 0.75rem; font-size:0.875rem; font-weight:600; }
-    .btn-primary{ background:#e11d48; color:#fff; } .btn-primary:hover{ background:#be123c; }
-    .btn-ghost{ border:1px solid #e5e7eb; background:#fff; } .btn-ghost:hover{ background:#f9fafb; }
-    .tag{ border:1px solid #e5e7eb; border-radius:9999px; padding:4px 8px; font-size:12px; }
-    .tag:hover{ background:#f9fafb; }
-    .line-clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  </style>
-
-  <!-- [03] 관리자 설정 로더(localStorage) -->
-  <script>
-    // [VAR-01] 관리자 설정이 저장되는 키
-    const NOYP_CFG_KEY = 'noyp_config_v1';
-    function getAdminCfg(){
-      try { return JSON.parse(localStorage.getItem(NOYP_CFG_KEY) || '{}'); }
-      catch(e){ return {}; }
-    }
-  </script>
-</head>
-<body class="text-gray-900">
-
-  <!-- [04] 상단 헤더/내비게이션 -->
-  <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
-    <div class="container mx-auto px-4 h-16 flex items-center">
-      <div class="flex-1 flex items-center gap-4">
-        <a href="#" class="text-xl font-extrabold">
-          <!-- [TXT-01: 워드마크] -->NO<span class="text-rose-600">열정페이</span>.COM
-        </a>
-        <nav class="hidden md:flex items-center gap-5 text-sm text-gray-600">
-          <a href="jobs.html" class="hover:text-rose-600"><!-- [TXT-04a] -->채용/작업</a>
-          <a href="#" class="hover:text-rose-600"><!-- [TXT-04b] -->상단고정(안내)</a>
-          <a href="guide.html" class="hover:text-rose-600"><!-- [TXT-04c] -->안전가이드</a>
-        </nav>
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="btn-login" class="btn btn-ghost"><!-- [TXT-04e] -->로그인</button>
-        <button id="btn-logout" class="btn btn-primary hidden"><!-- [TXT-04f] -->로그아웃</button>
-        <a href='post-job.html' class='inline-flex btn btn-primary'><!-- [TXT-04g] -->공고 등록</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- [05] 상단 검색바 -->
-  <section class="border-b bg-white">
-    <div class="container mx-auto px-4 py-4">
-      <div class="grid md:grid-cols-12 gap-3">
-        <div class="md:col-span-5">
-          <input id="q" type="text" class="w-full rounded-xl border px-3 py-2"
-                 placeholder="키워드 (예: 프론트엔드, 영상편집, React)">
-        </div>
-        <div class="md:col-span-2">
-          <select id="loc" class="w-full rounded-xl border px-3 py-2">
-            <option value=""><!-- [TXT-05b] -->지역(전체)</option>
-            <option>서울</option><option>부산</option><option>대구</option><option>경기</option><option>온라인</option>
-          </select>
-        </div>
-        <div class="md:col-span-2">
-          <select id="cat" class="w-full rounded-xl border px-3 py-2">
-            <option value=""><!-- [TXT-05c] -->분류(전체)</option>
-            <option>개발</option><option>디자인</option><option>영상/콘텐츠</option>
-            <option>마케팅/세일즈</option><option>운영/CS</option>
-          </select>
-        </div>
-        <div class="md:col-span-2">
-          <select id="reward" class="w-full rounded-xl border px-3 py-2">
-            <option value=""><!-- [TXT-05d] -->보상(전체)</option>
-            <option value="share">수익셰어</option><option value="bounty">건당 보너스</option><option value="hybrid">하이브리드</option>
-          </select>
-        </div>
-        <div class="md:col-span-1">
-          <button id="btn-search" class="w-full btn btn-primary"><!-- [TXT-05e] -->검색</button>
-        </div>
-      </div>
-      <div class="mt-3 flex flex-wrap gap-2 text-xs">
-        <!-- [05-1] 추천 태그 -->
-        <button class="tag" data-q="재택">#재택</button>
-        <button class="tag" data-q="단기">#단기</button>
-        <button class="tag" data-q="장기">#장기</button>
-        <button class="tag" data-q="디자인">#디자인</button>
-        <button class="tag" data-q="React">#React</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- [06] 메인 리스트/페이지네이션 -->
-  <main class="container mx-auto px-4 py-6 grid md:grid-cols-12 gap-6">
-    <section class="md:col-span-9">
-      <div class="mb-3 flex items-center justify-between text-sm text-gray-600">
-        <div><span id="result-count">0</span><!-- [TXT-06a] -->건의 공고</div>
-        <div class="flex items-center gap-2">
-          <label><!-- [TXT-06b] -->정렬</label>
-          <select id="sort" class="rounded-lg border px-2 py-1">
-            <option value="recent"><!-- [TXT-06c] -->최신순</option>
-          </select>
-        </div>
-      </div>
-      <div id="list" class="grid gap-3"><!-- [06-1] 공고 카드가 여기에 채워짐 --></div>
-      <div class="mt-4 flex items-center justify-center gap-2">
-        <button id="prev" class="btn btn-ghost"><!-- [TXT-06d] -->이전</button>
-        <span id="page" class="text-sm text-gray-600">1</span>
-        <button id="next" class="btn btn-ghost"><!-- [TXT-06e] -->다음</button>
-      </div>
-    </section>
-
-    <!-- [07] 사이드바 -->
-    <aside class="md:col-span-3 space-y-3">
-      <div class="rounded-2xl border bg-white p-4">
-        <h3 class="font-bold"><!-- [TXT-07a] -->카테고리</h3>
-        <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
-          <button class="tag" data-cat="개발">개발</button>
-          <button class="tag" data-cat="디자인">디자인</button>
-          <button class="tag" data-cat="영상/콘텐츠">영상/콘텐츠</button>
-          <button class="tag" data-cat="마케팅/세일즈">마케팅/세일즈</button>
-          <button class="tag" data-cat="운영/CS">운영/CS</button>
-          <button class="tag" data-cat="">전체</button>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border bg-white p-4" id="recent-box">
-        <h3 class="font-bold"><!-- [TXT-07b] -->최근 본 공고</h3>
-        <div id="recent" class="mt-2 space-y-2 text-sm text-gray-700"><!-- [07-1] 최근 본 공고 목록 --></div>
-      </div>
-
-      <div class="rounded-2xl border bg-white p-4" id="guide">
-        <h3 class="font-bold"><!-- [TXT-07c] -->안전/가이드</h3>
-        <ul class="mt-2 list-disc list-inside text-sm text-gray-700">
-          <li><!-- [TXT-07d] -->수익셰어 %/캡/지급 트리거 필수</li>
-          <li><!-- [TXT-07e] -->무급 상시근로 대체 불가</li>
-          <li><!-- [TXT-07f] -->분쟁 예방: 전자서명/증빙 보관</li>
-        </ul>
-      </div>
-    </aside>
-  </main>
-
-  <!-- [08] 상세 모달 -->
-  <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-2xl rounded-2xl bg-white p-6">
-      <div class="flex items-start justify-between">
-        <h3 id="modal-title" class="text-lg font-bold"><!-- [TXT-08a] -->상세 제목</h3>
-        <button id="modal-close" class="text-gray-500"><!-- [TXT-08b] -->닫기</button>
-      </div>
-      <div id="modal-body" class="mt-3 text-sm text-gray-700"><!-- [08-1] 상세 본문 --></div>
-      <div class="mt-4 flex items-center justify-end gap-2">
-        <button id="btn-apply" class="btn btn-primary"><!-- [TXT-08c] -->지원 문의</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- [09] 푸터 (개선됨, 내용 숨김 처리) -->
-  <footer class="mt-10 border-t bg-gray-50 text-gray-600">
-    <!-- 상단 링크 메뉴 -->
-    <div class="border-b">
-      <div class="container mx-auto px-4">
-        <div class="flex justify-center md:justify-start -mb-px invisible">
-          <a href="#" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">회사소개</a>
-          <a href="guide.html" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">이용약관</a>
-          <a href="guide.html" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium"><strong>개인정보처리방침</strong></a>
-          <a href="#" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">고객센터</a>
-          <a href="faq.html" class="px-4 py-3 border-b-2 border-transparent hover:border-rose-600 hover:text-rose-600 text-sm font-medium">FAQ</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 본문 정보 -->
-    <div class="container mx-auto px-4 py-8">
-      <div class="grid md:grid-cols-12 gap-8 invisible">
-        <div class="md:col-span-8 text-xs space-y-3">
-          <div class="font-bold text-base text-gray-800">NO열정페이.COM</div>
-          <div class="space-y-1">
-            <!-- TODO: 아래 회사 정보를 실제 정보로 수정하세요. -->
-            <p>(주)노열정페이 | 대표: 홍길동 | 사업자등록번호: 000-00-00000 | 통신판매업신고: 제2025-서울강남-00000호</p>
-            <p>주소: 서울특별시 강남구 테헤란로 000, 00층 (역삼동) | 개인정보보호책임자: 김철수</p>
-            <p>고객센터: 1588-0000 (평일 10:00~18:00, 점심 12:00~13:00) | 이메일: contact@no-yp.com</p>
-          </div>
-          <p class="text-gray-500">NO열정페이는 통신판매중개자이며, 통신판매의 당사자가 아닙니다. 개별 판매자가 등록한 공고 및 내용에 대하여 NO열정페이는 일체의 책임을 지지 않습니다.</p>
-        </div>
-        <div class="md:col-span-4">
-          <div class="font-semibold">소셜 미디어</div>
-          <div class="flex space-x-3 mt-2">
-            <!-- TODO: 실제 소셜 미디어 링크로 수정하세요. -->
-            <a href="#" class="text-sm hover:text-rose-600">블로그</a>
-            <a href="#" class="text-sm hover:text-rose-600">페이스북</a>
-            <a href="#" class="text-sm hover:text-rose-600">인스타그램</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 하단 저작권 -->
-    <div class="bg-gray-100">
-      <div class="container mx-auto px-4 py-4 text-center text-xs text-gray-500">
-        &copy; 2025 NO열정페이.COM. All rights reserved.
-      </div>
-    </div>
-  </footer>
-
-  <!-- [10] 상단 공지 배너 로더 + 관리자 override -->
-  <script>
-    (async () => {
-      const cfg = getAdminCfg();
-      try {
-        const r = await fetch('announcements.json', { cache: 'no-store' });
-        if(!r.ok) return;
-        const d = await r.json();
-        const items = (d && Array.isArray(d.items)) ? d.items.filter(x=>x.published) : [];
-        const a = items[0] || { title: '' };
-        if(cfg.annTitle) a.title = cfg.annTitle; // [TXT-10a] 관리자에서 입력한 공지 제목
-        if(!a.title) return;
-
-        const wrap = document.createElement('div');
-        wrap.className = 'sticky top-0 z-40';
-        wrap.innerHTML = `
-          <div class="bg-amber-100 text-amber-900 border-b border-amber-200">
-            <div class="container mx-auto px-4 py-2 text-sm flex items-center justify-between">
-              <div class="truncate"><strong class="mr-2">공지</strong>${escapeHtml(a.title)}</div>
-              <button onclick="this.closest('div.bg-amber-100').remove();">닫기</button>
-            </div>
-          </div>`;
-        document.body.prepend(wrap);
-
-        function escapeHtml(s){return String(s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
-      } catch(e){ /* silent */ }
-    })();
-  </script>
-
-  <!-- [11] 후원 팝업(오늘 하루 이 창을 열지 않음) - 마크업 -->
-  <div id="support-popup" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="w-full max-w-md rounded-2xl bg-white shadow-lg overflow-hidden">
-      <div class="px-5 py-4 border-b">
-        <h3 id="support-title" class="text-lg font-bold">
-          <!-- [TXT-11a: 팝업 제목 기본] -->[알림] NO열정페이 운영 후원 안내
-        </h3>
-      </div>
-      <div id="support-body" class="px-5 py-4 text-sm text-gray-700 space-y-2">
-        <!-- [TXT-11b: 팝업 본문 HTML] -->
-        <p>공정한 보상을 위한 커뮤니티 프로젝트 <strong>NO열정페이</strong>를 응원해 주세요. 서버/도메인/개발 유지비에 큰 힘이 됩니다.</p>
-        <ul class="list-disc list-inside text-gray-700">
-          <li>후원금은 운영비로만 사용되며, 정산 내역을 투명하게 공개합니다.</li>
-          <li>정기/일시 후원 모두 환영합니다.</li>
-        </ul>
-      </div>
-      <div class="px-5 pb-4 flex items-center justify-between">
-        <div class="flex items-center gap-2 text-xs text-gray-600">
-          <input type="checkbox" id="support-hide-today" class="rounded border-gray-300">
-          <label for="support-hide-today"><!-- [TXT-11c] -->오늘 하루 이 창을 열지 않음</label>
-        </div>
-        <div class="flex items-center gap-2">
-          <a id="support-donate" href="#" class="btn btn-primary"><!-- [TXT-11d] -->후원하기</a>
-          <button id="support-close" class="btn btn-ghost"><!-- [TXT-11e] -->닫기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- [12] 후원 팝업 스크립트 -->
-  <script>
-    (function(){
-      // [VAR-02] 팝업 숨김 유지 키 & 기간
-      const POPUP_KEY = 'supportPopupHideUntil';
-      const DAY_MS = 24*60*60*1000;
-
-      // [VAR-03] 기본 후원 링크(관리자에서 덮어씀)
-      let donationUrl = '#';
-
-      const cfg = getAdminCfg();
-      const pop = document.getElementById('support-popup');
-      const openBtn = document.getElementById('open-support');
-      const closeBtn = document.getElementById('support-close');
-      const donateBtn = document.getElementById('support-donate');
-      const hideToday = document.getElementById('support-hide-today');
-      const titleEl = document.getElementById('support-title');
-      const bodyEl  = document.getElementById('support-body');
-
-      // [12-1] 관리자 값 반영
-      if(cfg.donationUrl) donationUrl = cfg.donationUrl;
-      if(cfg.supportTitle) titleEl.textContent = cfg.supportTitle;
-      if(cfg.supportBodyHtml) bodyEl.innerHTML = cfg.supportBodyHtml;
-      donateBtn.setAttribute('href', donationUrl);
-
-      // [12-2] 표시/숨김 유틸
-      function show(){ pop.classList.remove('hidden'); pop.classList.add('flex'); }
-      function hide(){ pop.classList.add('hidden'); pop.classList.remove('flex'); }
-      function shouldShow(){
-        const until = parseInt(localStorage.getItem(POPUP_KEY)||'0',10) || 0;
-        return Date.now() > until;
-      }
-      function closeAndMaybeHideToday(){
-        if(hideToday.checked){
-          localStorage.setItem(POPUP_KEY, String(Date.now() + DAY_MS));
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NO열정페이.COM - 공정한 일자리 매칭</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        hide();
-      }
 
-      // [12-3] 초기 표시 & 이벤트
-      if(shouldShow()) { show(); }
-      openBtn?.addEventListener('click', show);
-      closeBtn?.addEventListener('click', closeAndMaybeHideToday);
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !pop.classList.contains('hidden')) closeAndMaybeHideToday(); });
-      pop.addEventListener('click', (e)=>{ if(e.target===pop) closeAndMaybeHideToday(); });
-    })();
-  </script>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
 
-  
+        /* 네비게이션 */
+        nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-  <!-- [14] 인라인 JS 스텁(태그 클릭/검색 데모) -->
-  <script>
-    (function(){
-      const $ = (s, r=document)=>r.querySelector(s);
-      const $$= (s, r=document)=>Array.from(r.querySelectorAll(s));
-      $$('.tag[data-q]').forEach(el=>{
-        el.addEventListener('click', ()=>{
-          const q=$('#q'); if(q) q.value = el.dataset.q || '';
-        });
-      });
-      $('#btn-search')?.addEventListener('click', ()=>{
-        alert('검색 데모: 실제 데이터 연동 전입니다.');
-      });
-    })();
-  </script>
-  <script src="main.js"></script>
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #e74c3c;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-login {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-signup {
+            padding: 0.5rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* 메인 배너 */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* 검색 섹션 */
+        .search-section {
+            background: white;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box input,
+        .search-box select {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-box button {
+            padding: 0.8rem 2rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .search-box button:hover {
+            background: #c0392b;
+        }
+
+        /* 공고 목록 */
+        .job-list {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .job-card {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #e74c3c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: box-shadow 0.3s;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .job-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .job-info p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .meta-tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .salary {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 1rem;
+        }
+
+        .btn-apply {
+            padding: 0.7rem 1.5rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-apply:hover {
+            background: #c0392b;
+        }
+
+        /* 로그인/회원가입 폼 */
+        .form-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 4px rgba(231, 76, 60, 0.2);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.8rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: #c0392b;
+        }
+
+        /* 마이페이지 */
+        .dashboard {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #e74c3c;
+        }
+
+        .content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .content h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+        }
+
+        /* 공고 작성 폼 */
+        .posting-form {
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .posting-form h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section h3 {
+            margin-bottom: 1rem;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            color: #856404;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box input,
+            .search-box select {
+                min-width: 100%;
+            }
+
+            .job-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .salary {
+                margin-right: 0;
+                margin-top: 0.5rem;
+            }
+        }
+
+        /* 채팅 */
+        .chat-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1rem;
+            height: 600px;
+        }
+
+        .chat-list {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chat-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chat-item:hover {
+            background: #f9f9f9;
+        }
+
+        .chat-item h4 {
+            margin-bottom: 0.3rem;
+            color: #333;
+        }
+
+        .chat-item p {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .chat-window {
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            background: #e74c3c;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .chat-input button {
+            padding: 0.7rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav>
+        <div class="logo">NO열정페이</div>
+        <ul>
+            <li><a href="#jobs">공고 찾기</a></li>
+            <li><a href="#about">소개</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <a href="#login" class="btn-login">로그인</a>
+            <a href="#signup" class="btn-signup">회원가입</a>
+        </div>
+    </nav>
+
+    <!-- 메인 배너 -->
+    <div class="hero">
+        <h1>공정한 일자리 매칭</h1>
+        <p>열정페이는 그만! 최저시급 이상의 일자리만 모았습니다.</p>
+    </div>
+
+    <!-- 검색 섹션 (메인페이지) -->
+    <div class="search-section">
+        <h2 style="margin-bottom: 1.5rem; color: #333;">공고 찾기</h2>
+        <div class="search-box">
+            <input type="text" placeholder="직무, 기술 검색...">
+            <select>
+                <option>근무 형태</option>
+                <option>시간제</option>
+                <option>계약직</option>
+            </select>
+            <select>
+                <option>근무 시간</option>
+                <option>1-4시간</option>
+                <option>5-8시간</option>
+                <option>9시간 이상</option>
+            </select>
+            <button>검색</button>
+        </div>
+    </div>
+
+    <!-- 공고 목록 -->
+    <div class="job-list">
+        <h2 style="margin-bottom: 1.5rem; color: #333;">추천 공고</h2>
+
+        <!-- 공고 카드 1 -->
+        <div class="job-card">
+            <div class="job-info">
+                <h3>React 개발자 (풀스택)</h3>
+                <p style="color: #555; font-weight: 500;">스타트업 A</p>
+                <div class="job-meta">
+                    <span class="meta-tag">출근</span>
+                    <span class="meta-tag">경력 1년 이상</span>
+                    <span class="meta-tag">주 20시간</span>
+                </div>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <strong>혜택:</strong> 사무실 24시간 접근, 프로젝트 포트폴리오
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <div class="salary">₩15,000/시간</div>
+                <button class="btn-apply">지원하기</button>
+            </div>
+        </div>
+
+        <!-- 공고 카드 2 -->
+        <div class="job-card">
+            <div class="job-info">
+                <h3>Python 데이터 분석</h3>
+                <p style="color: #555; font-weight: 500;">스타트업 B</p>
+                <div class="job-meta">
+                    <span class="meta-tag">원격</span>
+                    <span class="meta-tag">신입 가능</span>
+                    <span class="meta-tag">주 15시간</span>
+                </div>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <strong>혜택:</strong> 교육 지원, 유연한 근무시간
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <div class="salary">₩14,000/시간</div>
+                <button class="btn-apply">지원하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 공고 작성 페이지 (숨겨진 상태) -->
+    <div id="posting-page" style="display: none;">
+        <div class="posting-form">
+            <h2>새 공고 올리기</h2>
+
+            <div class="alert">
+                ✓ 모든 공고는 최저시급 이상으로만 등록 가능합니다.<br>
+                ✓ 관리자 검증 후 게시됩니다.
+            </div>
+
+            <form>
+                <div class="form-section">
+                    <h3>기본 정보</h3>
+                    <div class="form-group">
+                        <label>공고 제목</label>
+                        <input type="text" placeholder="예: React 개발자 모집" required>
+                    </div>
+                    <div class="form-group">
+                        <label>직무 설명</label>
+                        <input type="text" placeholder="상세한 업무 내용을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>필요 경력</label>
+                        <select required>
+                            <option>신입</option>
+                            <option>1년 이상</option>
+                            <option>3년 이상</option>
+                            <option>5년 이상</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>근무 조건 (필수)</h3>
+                    <div class="form-group">
+                        <label>시급 (₩)</label>
+                        <input type="number" placeholder="최저시급 이상" required>
+                    </div>
+                    <div class="form-group">
+                        <label>근무 형태</label>
+                        <select required>
+                            <option>시간제</option>
+                            <option>계약직</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>주당 근무시간</label>
+                        <input type="number" placeholder="시간" required>
+                    </div>
+                    <div class="form-group">
+                        <label>근무 방식</label>
+                        <select required>
+                            <option>출근</option>
+                            <option>원격</option>
+                            <option>혼합</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>추가 혜택 (선택)</h3>
+                    <div class="form-group">
+                        <label>사무실 접근</label>
+                        <input type="text" placeholder="예: 24시간 접근 가능">
+                    </div>
+                    <div class="form-group">
+                        <label>교육 지원</label>
+                        <input type="text" placeholder="예: 프로젝트 교육">
+                    </div>
+                    <div class="form-group">
+                        <label>기타 혜택</label>
+                        <input type="text" placeholder="예: 포트폴리오 기회">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">공고 올리기</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 로그인 페이지 (숨겨진 상태) -->
+    <div id="login-page" style="display: none;">
+        <div class="form-container">
+            <h2>로그인</h2>
+            <form>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" placeholder="이메일을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="password" placeholder="비밀번호를 입력하세요" required>
+                </div>
+                <button type="submit" class="btn-submit">로그인</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 회원가입 페이지 (숨겨진 상태) -->
+    <div id="signup-page" style="display: none;">
+        <div class="form-container">
+            <h2>회원가입</h2>
+            <form>
+                <div class="form-group">
+                    <label>회원 유형</label>
+                    <select required>
+                        <option value="">선택하세요</option>
+                        <option value="seeker">구직자 (일 찾는 사람)</option>
+                        <option value="employer">구인자 (사람 찾는 회사)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" placeholder="이메일을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="password" placeholder="비밀번호를 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호 확인</label>
+                    <input type="password" placeholder="비밀번호를 다시 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label>이름</label>
+                    <input type="text" placeholder="이름을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label>전화번호</label>
+                    <input type="tel" placeholder="010-0000-0000" required>
+                </div>
+                <button type="submit" class="btn-submit">회원가입</button>
+            </form>
+        </div>
+    </div>
 
 </body>
 </html>
-
-
